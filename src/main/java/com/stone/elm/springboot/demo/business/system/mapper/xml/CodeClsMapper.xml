@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.stone.elm.springboot.demo.business.system.mapper.CodeClsMapper" >
+
+    <sql id="codeClsInsertFields">
+        code_cls_id,
+        code_cls_name,
+        code_cls_type,
+        rela_code_cls_id,
+        valid_date,
+        invalid_date,
+        valid_flag
+    </sql>
+
+    <sql id="codeClsValInsertFields">
+        code_cls_val_id,
+        code_cls_id,
+        code_cls_val,
+        code_cls_val_name,
+        prnt_code_cls_val,
+        valid_date,
+        invalid_date,
+        valid_flag,
+        serial_number,
+        code_cls_categ_name,
+        code_val_desc
+    </sql>
+
+    <sql id="codeClsQueryFields">
+        code_cls_id as "codeClsID",
+        code_cls_name as "codeClsName",
+        code_cls_type as "codeClsType",
+        rela_code_cls_id as "relaCodeClsID",
+        valid_date as "validDate",
+        invalid_date as "invalidDate",
+        valid_flag as "validFlag",
+        update_flag as "updateFlag"
+    </sql>
+
+    <sql id="codeClsValQueryFields">
+        code_cls_val_id as "codeClsValID",
+        code_cls_id as "codeClsID",
+        code_cls_val as "codeClsVal",
+        code_cls_val_name as "codeClsValName",
+        prnt_code_cls_val as "prntCodeClsVal",
+        valid_date as "validDate",
+        invalid_date as "invalidDate",
+        valid_flag as "validFlag",
+        serial_number as "serialNumber",
+        code_cls_categ_name as "codeClsCategName",
+        code_val_desc as "codeValDesc"
+    </sql>
+
+    <sql id="codeClsQueryParam">
+        <where>
+            <if test="codeClsID != null and codeClsID != ''">
+                and t.code_cls_id = #{codeClsID}
+            </if>
+            <if test="codeClsName != null and codeClsName != ''">
+                and t.code_cls_name = #{codeClsName}
+            </if>
+            <if test="codeClsType != null and codeClsType != ''">
+                and t.code_cls_type = #{codeClsType}
+            </if>
+            <if test="updateFlag != null and updateFlag != ''">
+                and t.update_flag = #{updateFlag}
+            </if>
+            <if test="codeClsIDList != null and codeClsIDList.size() > 0">
+                and t.code_cls_id in (
+                <foreach collection="codeClsIDList" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="codeClsTypeList != null and codeClsTypeList.size() > 0">
+                and t.code_cls_type in (
+                    <foreach collection="codeClsTypeList" item="item" separator=",">
+                        #{item}
+                    </foreach>
+                )
+            </if>
+            <if test="notCodeClsIDList != null and notCodeClsIDList.size() > 0">
+                and t.code_cls_id not in (
+                <foreach collection="notCodeClsIDList" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+        </where>
+    </sql>
+
+    <sql id="codeClsValQueryParam">
+        <where>
+            <if test="codeClsValID != null and codeClsValID != ''">
+                and t.code_cls_val_id = #{codeClsValID}
+            </if>
+            <if test="codeClsID != null and codeClsID != ''">
+                and t.code_cls_id = #{codeClsID}
+            </if>
+            <if test="codeClsVal != null and codeClsVal != ''">
+                and t.code_cls_val = #{codeClsVal}
+            </if>
+            <if test="codeClsValName != null and codeClsValName != ''">
+                and t.code_cls_val_name = #{codeClsValName}
+            </if>
+            <if test="codeClsIDList != null and codeClsIDList.size() > 0">
+                and t.code_cls_id in (
+                <foreach collection="codeClsIDList" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+        </where>
+    </sql>
+
+    <sql id="pageParam">
+        <if test="pageSize != null and pageSize != '' and pageNo != null and pageNo != ''">
+            limit #{indexStart}, #{pageSize}
+        </if>
+    </sql>
+
+    <select id="getCodeClsList" resultType="com.stone.elm.springboot.demo.business.system.model.vo.CodeClsVO">
+        select
+            <include refid="codeClsQueryFields"/>
+        from code_cls t
+        <include refid="codeClsQueryParam"/>
+        <include refid="pageParam"/>
+    </select>
+
+    <select id="getCodeClsValList" resultType="com.stone.elm.springboot.demo.business.system.model.vo.CodeClsValVO">
+        select
+        <include refid="codeClsValQueryFields"/>
+        from code_cls_val t
+        <include refid="codeClsValQueryParam"/>
+        <include refid="pageParam"/>
+    </select>
+
+    <select id="countCodeClsAll" resultType="java.lang.Integer">
+        select count(t.code_cls_id)
+        from code_cls t
+        <include refid="codeClsQueryParam"/>
+    </select>
+
+    <select id="countCodeClsValAll" resultType="java.lang.Integer">
+        select count(t.code_cls_val_id)
+        from code_cls_val t
+        <include refid="codeClsValQueryParam"/>
+    </select>
+
+    <insert id="createCodeClsList">
+        insert into code_cls(<include refid="codeClsInsertFields"/>) values
+        <foreach collection="createCodeClsList" separator="," item="item" index="index">
+            (
+            #{item.codeClsID},
+            #{item.codeClsName},
+            #{item.codeClsType},
+            #{item.relaCodeClsID},
+            #{item.validDate},
+            #{item.invalidDate},
+            #{item.validFlag}
+            )
+        </foreach>
+    </insert>
+
+    <insert id="createCodeClsValList">
+        insert into code_cls_val(<include refid="codeClsValInsertFields"/>) values
+        <foreach collection="createCodeClsValList" separator="," item="item" index="index">
+            (
+            #{item.codeClsValID},
+            #{item.codeClsID},
+            #{item.codeClsVal},
+            #{item.codeClsValName},
+            #{item.prntCodeClsVal},
+            #{item.validDate},
+            #{item.invalidDate},
+            #{item.validFlag},
+            #{item.serialNumber},
+            #{item.codeClsCategName},
+            #{item.codeValDesc}
+            )
+        </foreach>
+    </insert>
+
+    <update id="updateCodeClsList">
+        <foreach collection="updateCodeClsList" item="item" index="index" open="" close="" separator=";">
+            update code_cls
+            <set>
+                <if test="item.codeClsName != null and item.codeClsName != ''">
+                    code_cls_name = #{item.codeClsName},
+                </if>
+                <if test="item.codeClsType != null and item.codeClsType != ''">
+                    code_cls_type = #{item.codeClsType},
+                </if>
+                <if test="item.relaCodeClsID != null and item.relaCodeClsID != ''">
+                    rela_code_cls_id = #{item.relaCodeClsID},
+                </if>
+                <if test="item.validDate != null and item.validDate != ''">
+                    valid_date = #{item.validDate},
+                </if>
+                <if test="item.invalidDate != null and item.invalidDate != ''">
+                    invalid_date = #{item.invalidDate},
+                </if>
+                <if test="item.validFlag != null and item.validFlag != ''">
+                    valid_flag = #{item.validFlag},
+                </if>
+                code_cls_id = #{item.codeClsID}
+            </set>
+            <where>
+                code_cls_id = #{item.codeClsID}
+            </where>
+        </foreach>
+    </update>
+
+    <update id="updateCodeClsValList">
+        <foreach collection="updateCodeClsValList" item="item" index="index" open="" close="" separator=";">
+            update code_cls_val
+            <set>
+                <if test="item.codeClsVal != null and item.codeClsVal != ''">
+                    code_cls_val = #{item.codeClsVal},
+                </if>
+                <if test="item.codeClsValName != null and item.codeClsValName != ''">
+                    code_cls_val_name = #{item.codeClsValName},
+                </if>
+                <if test="item.serialNumber != null and item.serialNumber != ''">
+                    serial_number = #{item.serialNumber},
+                </if>
+                <if test="item.codeClsCategName != null and item.codeClsCategName != ''">
+                    item.code_cls_categ_name = #{item.codeClsCategName},
+                </if>
+                <if test="item.codeValDesc != null and item.codeValDesc != ''">
+                    code_val_desc = #{item.codeValDesc},
+                </if>
+                <if test="item.validDate != null and item.validDate != ''">
+                    valid_date = #{item.validDate},
+                </if>
+                <if test="item.invalidDate != null and item.invalidDate != ''">
+                    invalid_date = #{item.invalidDate},
+                </if>
+                <if test="item.validFlag != null and item.validFlag != ''">
+                    valid_flag = #{item.validFlag},
+                </if>
+                code_cls_id = #{item.codeClsID}
+            </set>
+            <where>
+                code_cls_val_id = #{item.codeClsValID}
+            </where>
+        </foreach>
+    </update>
+    
+    <delete id="deleteCodeClsList">
+        delete from code_cls where code_cls_id in (
+            <foreach collection="deleteCodeClsList" item="item" index="index" open="" close="" separator=",">
+                #{item.codeClsID}
+            </foreach>
+        )
+    </delete>
+
+    <delete id="deleteCodeClsValList">
+        delete from code_cls_val where code_cls_val_id in (
+        <foreach collection="deleteCodeClsValList" item="item" index="index" open="" close="" separator=",">
+            #{item.codeClsValID}
+        </foreach>
+        )
+    </delete>
+</mapper>
