@@ -34,6 +34,27 @@
 			<version>2.1.2.RELEASE</version>
 		</dependency>
 
+		<!-- 使用Spring MVC构建web应用程序，包括 REST ful 应用程序。使用Apache Tomcat作为默认的嵌入式容器。 -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>5.1.18.RELEASE</version>
+		</dependency>
+
+		<!-- 添加Swagger -->
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>2.9.2</version>
+		</dependency>
+
+		<!-- 添加Swagger的Docket配置 -->
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>2.9.2</version>
+		</dependency>
+
 		<!-- 校验 -->
 		<dependency>
 			<groupId>javax.validation</groupId>
