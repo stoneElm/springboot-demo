@@ -9,9 +9,9 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-public class BeanCopyUtils {
+public class BeanCopyUtil {
 
-    private BeanCopyUtils() {
+    private BeanCopyUtil() {
     }
 
     public static void copy(Object srcObj, Object destObj) {

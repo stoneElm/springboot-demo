@@ -15,7 +15,7 @@ public class ConvertUtil {
     public static <T, E> List<E> convertListFromListIgnoreNull(List<T> ao, Class<E> e) {
         List<E> list = Lists.newArrayList();
         try {
-            BeanCopyUtils.copyList(ao, list, e);
+            BeanCopyUtil.copyList(ao, list, e);
         } catch (Exception ex) {
             throw new SystemException(BaseConstant.BEAN_COPY_ERROR, ResponseConstant.FAIL);
         }
