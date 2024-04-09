@@ -45,13 +45,13 @@ public class ControllerHandle {
         MethodSignature methodSignature = (MethodSignature) signature;
         Method method = methodSignature.getMethod();
 
-        LOGGER.info("当前调用: {}$${}", declaringType.getTypeName(), method.getName());
+        LOGGER.info("调用: {}$${} 开始", declaringType.getTypeName(), method.getName());
 
         ControllerHandleUtil.handlePageParam(proceedingJoinPoint);
 
         Object proceed = proceedingJoinPoint.proceed(proceedingJoinPoint.getArgs());
         long e = System.currentTimeMillis();
-        LOGGER.info("调用 {}$${} 结束" ,  declaringType.getTypeName(), method.getName());
+        LOGGER.info("调用: {}$${} 结束" ,  declaringType.getTypeName(), method.getName());
         LOGGER.info("方法总耗时: {}ms", (e - s));
         return proceed;
     }

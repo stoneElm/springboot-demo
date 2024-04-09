@@ -2,7 +2,7 @@ package com.stone.elm.springboot.demo.basictech.common.exception;
 
 public class BusinessException extends BaseException{
     private Object data;
-    private static final long serialVersionUID = -7395673441935057898L;
+    private static final long serialVersionUID = -53711580203962796L;
 
     public BusinessException(String message, String code) {
         super(message, code);

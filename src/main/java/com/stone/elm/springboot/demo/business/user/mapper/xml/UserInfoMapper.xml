@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.stone.elm.springboot.demo.business.user.mapper.UserInfoMapper" >
+
+    <!-- 用户信息更新字段SQL片段 -->
+    <sql id="userInfoUpdateFields">
+        user_id,
+        user_name,
+        nick_name,
+        password,
+        user_phone
+    </sql>
+
+    <!-- 用户信息查询字段SQL片段 -->
+    <sql id="userInfoQueryFields">
+        user_id as "userID",
+        user_name as "userName",
+        nick_name as "nickName",
+        password as "password",
+        user_phone as "userPhone"
+    </sql>
+
+    <!-- 查询分页信息SQL片段 -->
+    <sql id="pageParam">
+        <if test="pageSize != null and pageSize != '' and pageNo != null and pageNo != ''">
+            limit #{indexStart}, #{pageSize}
+        </if>
+    </sql>
+
+    <!-- 用户信息查询条件SQL片段 -->
+    <sql id="userInfoQueryParam">
+        <where>
+            <if test="userID != null and userID != ''">
+                and t.code_cls_val_id = #{codeClsValID}
+            </if>
+            <if test="userName != null and userName != ''">
+                and t.user_name = #{userName}
+            </if>
+            <if test="userPhone != null and userPhone != ''">
+                and t.user_phone = #{userPhone}
+            </if>
+            <if test="nickName != null and nickName != ''">
+                and t.nick_name like CONCAT('%', #{nickName}, '%')
+            </if>
+            <if test="userIDList != null and userIDList.size() > 0">
+                and t.user_id in (
+                <foreach collection="userIDList" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+        </where>
+    </sql>
+
+    <!-- 根据条件查询用户信息 -->
+    <select id="selectUserInfoList" resultType="com.stone.elm.springboot.demo.business.user.model.vo.UserInfoVO">
+        select
+        <include refid="userInfoUpdateFields"/>
+        from user_info t
+        <include refid="userInfoQueryParam"/>
+        <include refid="pageParam"/>
+    </select>
+
+    <insert id="createUserInfo">
+        insert into user_info(<include refid="userInfoUpdateFields"/>) values
+        (
+            #{userID},
+            #{userName},
+            #{nickName},
+            #{password},
+            #{userPhone}
+        )
+    </insert>
+</mapper>

@@ -21,6 +21,7 @@ public class CorsConfig {
     }
 
     private CorsConfiguration buildConfig() {
+
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         // 允许任何域名访问
         corsConfiguration.addAllowedOrigin("*");
@@ -28,6 +29,7 @@ public class CorsConfig {
         corsConfiguration.addAllowedHeader("*");
         // 允许任何方法访问
         corsConfiguration.addAllowedMethod("*");
+
         return corsConfiguration;
     }
 }
