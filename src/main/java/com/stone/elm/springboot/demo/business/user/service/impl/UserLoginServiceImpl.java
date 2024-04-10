@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -102,6 +103,24 @@ public class UserLoginServiceImpl implements IUserLoginService {
         userInfoMapper.createUserInfo(userInfoAO);
 
         return null;
+    }
+
+    @Override
+    public ResponseResult<Object> logout(UserInfoAO userInfoAO) {
+        // 删除 SecurityContextHolder 中的用户ID
+        UsernamePasswordAuthenticationToken authentication = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        UserInfoVO principal = (UserInfoVO) authentication.getPrincipal();
+
+        Long userID = principal.getUserID();
+
+        // 删除redis值
+        redisCache.deleteObject("user-" + userID);
+
+        ResponseResult<Object> result = ResultUtils.wrapResult();
+
+        result.setMessage("登出成功! ");
+
+        return result;
     }
 
     private void checkLoginParam(LoginInfoAO loginInfoAO) {

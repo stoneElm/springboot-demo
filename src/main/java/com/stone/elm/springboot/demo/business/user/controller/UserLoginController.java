@@ -38,4 +38,11 @@ public class UserLoginController {
             @ApiParam(name = "UserInfoVO", value = "用户注册信息实体AO") @RequestBody @Validated(UserInfoAO.registerGroup.class) UserInfoAO userInfoAO) {
         return iUserLoginService.register(userInfoAO);
     }
+
+    @PostMapping("/logout")
+    @ApiOperation(value = "登出操作 维护人:Lan StoneElm")
+    public ResponseResult<Object> logout (
+            @ApiParam(name = "UserInfoVO", value = "用户注册信息实体AO") @RequestBody UserInfoAO userInfoAO) {
+        return iUserLoginService.logout(userInfoAO);
+    }
 }

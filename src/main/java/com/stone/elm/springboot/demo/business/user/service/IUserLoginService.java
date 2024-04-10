@@ -13,4 +13,6 @@ public interface IUserLoginService {
     ResponseResult<LoginInfoVO> login(LoginInfoAO loginInfoAO);
 
     ResponseResult<List<UserInfoVO>> register(UserInfoAO userInfoAO);
+
+    ResponseResult<Object> logout(UserInfoAO userInfoAO);
 }
