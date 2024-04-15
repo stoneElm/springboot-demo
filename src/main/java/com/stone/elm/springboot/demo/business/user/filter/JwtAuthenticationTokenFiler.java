@@ -32,7 +32,7 @@ public class JwtAuthenticationTokenFiler extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // 获取token
-        String token = request.getHeader("token");
+        String token = request.getHeader("Stone-Token");
         if (StringUtils.isBlank(token)) {
             // 放行, 交给其他过滤器处理
             filterChain.doFilter(request, response);

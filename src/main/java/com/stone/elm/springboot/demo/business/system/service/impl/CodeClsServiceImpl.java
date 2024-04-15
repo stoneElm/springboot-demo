@@ -1,5 +1,6 @@
 package com.stone.elm.springboot.demo.business.system.service.impl;
 
+import com.stone.elm.springboot.demo.basictech.common.exception.BusinessException;
 import com.stone.elm.springboot.demo.basictech.common.response.ResponseConstant;
 import com.stone.elm.springboot.demo.basictech.common.response.ResponseResult;
 import com.stone.elm.springboot.demo.basictech.common.response.ResultUtils;
@@ -255,11 +256,35 @@ public class CodeClsServiceImpl implements ICodeClsService {
             return ResultUtils.wrapResult();
         }
 
+        checkCodeClsValUpdateFlag(createCodeClsValList);
+
         Integer row = codeClsMapper.createCodeClsValList(createCodeClsValList);
 
         LOGGER.info("成功执行{}条数据", row);
 
         return ResultUtils.wrapResult();
+    }
+
+    private void checkCodeClsValUpdateFlag(List<CodeClsValAO> createCodeClsValList) {
+        List<Long> codeClsIDList = createCodeClsValList.stream().map(CodeClsValAO::getCodeClsID).distinct().collect(Collectors.toList());
+        CodeClsAO codeClsAO = new CodeClsAO();
+        codeClsAO.setCodeClsIDList(codeClsIDList);
+        codeClsAO.setUpdateFlag(CodeClsConstant.UPDATE_FLAG_NO);
+        List<CodeClsVO> codeClsList = codeClsMapper.getCodeClsList(codeClsAO);
+
+        if (CollectionUtils.isEmpty(codeClsList)) {
+            return;
+        }
+
+        StringBuilder result = new StringBuilder("存在标准代码分类为：");
+
+        for (CodeClsVO datum : codeClsList) {
+            result.append("【").append(datum.getCodeClsType()).append("】");
+        }
+
+        result.append("下的标准代码值信息不允许被修改！");
+
+        throw new BusinessException(result.toString(), ResponseConstant.VALIDATION_FAILED);
     }
 
     @Override
@@ -269,6 +294,8 @@ public class CodeClsServiceImpl implements ICodeClsService {
         if (CollectionUtils.isEmpty(updateCodeClsValList)) {
             return ResultUtils.wrapResult();
         }
+
+        checkCodeClsValUpdateFlag(updateCodeClsValList);
 
         Integer row = codeClsMapper.updateCodeClsValList(updateCodeClsValList);
 
@@ -351,6 +378,8 @@ public class CodeClsServiceImpl implements ICodeClsService {
         if (CollectionUtils.isEmpty(deleteCodeClsValList)) {
             return ResultUtils.wrapResult();
         }
+
+        checkCodeClsValUpdateFlag(deleteCodeClsValList);
 
         Integer row = codeClsMapper.deleteCodeClsValList(deleteCodeClsValList);
 

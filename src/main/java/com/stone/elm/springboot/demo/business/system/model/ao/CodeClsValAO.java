@@ -17,8 +17,8 @@ public class CodeClsValAO extends QueryEntity {
     @NotNull(message = "标准代码分类标识不能为空", groups = {deleteGroup.class, updateGroup.class})
     private Long codeClsValID;
 
-    @NotBlank(message = "标准代码分类标识不能为空", groups = {createGroup.class, updateGroup.class})
-    private String codeClsID;
+    @NotNull(message = "标准代码分类标识不能为空", groups = {createGroup.class, updateGroup.class})
+    private Long codeClsID;
 
     private List<Long> codeClsIDList;
 
@@ -53,11 +53,11 @@ public class CodeClsValAO extends QueryEntity {
         this.codeClsValID = codeClsValID;
     }
 
-    public String getCodeClsID() {
+    public Long getCodeClsID() {
         return codeClsID;
     }
 
-    public void setCodeClsID(String codeClsID) {
+    public void setCodeClsID(Long codeClsID) {
         this.codeClsID = codeClsID;
     }
 
