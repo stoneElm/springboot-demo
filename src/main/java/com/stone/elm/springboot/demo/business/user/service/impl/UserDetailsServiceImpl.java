@@ -30,7 +30,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         //如果没有查询到用户，就抛出异常
         if (CollectionUtils.isEmpty(userInfoList)) {
-            throw new BusinessException("用户名或者密码错误！", ResponseConstant.FAIL);
+            throw new BusinessException("用户名与密码不匹配！", ResponseConstant.FAIL);
         }
 
         if (userInfoList.size() > 1) {

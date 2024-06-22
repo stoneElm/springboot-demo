@@ -1,5 +1,7 @@
 package com.stone.elm.springboot.demo.business.user.service.impl;
 
+import com.stone.elm.springboot.demo.basictech.common.constant.RedisKeyConstant;
+import com.stone.elm.springboot.demo.basictech.common.constant.SymbolConstant;
 import com.stone.elm.springboot.demo.basictech.common.exception.BusinessException;
 import com.stone.elm.springboot.demo.basictech.common.response.ResponseConstant;
 import com.stone.elm.springboot.demo.basictech.common.response.ResponseResult;
@@ -62,16 +64,26 @@ public class UserLoginServiceImpl implements IUserLoginService {
         if (StringUtils.equals(LoginModelEnum.LOGIN_MODEL_PASSWORD.getLoginModelCode(), loginInfoAO.getLoginModel())) {
             // 进行用户认证
             UsernamePasswordAuthenticationToken authenticationToken =
-                    new UsernamePasswordAuthenticationToken(loginInfoAO.getUserName(),loginInfoAO.getPassword());
+                    new UsernamePasswordAuthenticationToken(loginInfoAO.getUserName(), loginInfoAO.getPassword());
 
-            // 会调用 UserDetailsServiceImpl获取用户信息
-            Authentication authenticate = authenticationManager.authenticate(authenticationToken);
+            // 会调用 UserDetailsServiceImpl 获取用户信息
+            Authentication authenticate;
+            try {
+                authenticate = authenticationManager.authenticate(authenticationToken);
+            } catch (Exception e) {
+                throw new BusinessException(e.getMessage(), ResponseConstant.FAIL);
+            }
 
             if (Objects.isNull(authenticate)) {
                 throw new BusinessException("用户名或密码错误!", ResponseConstant.FAIL);
             }
         } else {
-            throw new BusinessException("验证码错误!", ResponseConstant.FAIL);
+            // 根据手机号获取验证码
+            String captcha = redisCache.getCacheObject("captcha-" + userInfo.getUserPhone());
+
+            if (StringUtils.isBlank(captcha) || StringUtils.equals(captcha, loginInfoAO.getVerificationCode())) {
+                throw new BusinessException("验证码错误!", ResponseConstant.FAIL);
+            }
         }
 
         // 通过了，生成jwt
@@ -83,7 +95,7 @@ public class UserLoginServiceImpl implements IUserLoginService {
         redisUserInfo.setUserName(userInfo.getUserName());
 
         //将用户信息存入redis
-        redisCache.setCacheObject("user-" + userInfo.getUserID(), redisUserInfo);
+        redisCache.setCacheObject(RedisKeyConstant.USER_TOKEN_LONG + SymbolConstant.BAR + userInfo.getUserID(), redisUserInfo);
 
 
         return ResultUtils.wrapResult(resultData);
@@ -114,7 +126,7 @@ public class UserLoginServiceImpl implements IUserLoginService {
         Long userID = principal.getUserID();
 
         // 删除redis值
-        redisCache.deleteObject("user-" + userID);
+        redisCache.deleteObject(RedisKeyConstant.USER_TOKEN_LONG + SymbolConstant.BAR + userID);
 
         ResponseResult<Object> result = ResultUtils.wrapResult();
 
@@ -125,7 +137,7 @@ public class UserLoginServiceImpl implements IUserLoginService {
 
     private void checkLoginParam(LoginInfoAO loginInfoAO) {
         if (!StringUtils.equals(LoginModelEnum.LOGIN_MODEL_PASSWORD.getLoginModelCode(), loginInfoAO.getLoginModel())
-                && !StringUtils.equals(LoginModelEnum.LOGIN_MODEL_PASSWORD.getLoginModelCode(), loginInfoAO.getLoginModel())) {
+                && !StringUtils.equals(LoginModelEnum.LOGIN_MODEL_PHONE.getLoginModelCode(), loginInfoAO.getLoginModel())) {
             throw new BusinessException("登陆模式不存在", ResponseConstant.FAIL);
         }
 

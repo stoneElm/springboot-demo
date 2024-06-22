@@ -1,5 +1,8 @@
 package com.stone.elm.springboot.demo.business.user.filter;
 
+import com.stone.elm.springboot.demo.basictech.common.constant.RedisKeyConstant;
+import com.stone.elm.springboot.demo.basictech.common.constant.RequestConstant;
+import com.stone.elm.springboot.demo.basictech.common.constant.SymbolConstant;
 import com.stone.elm.springboot.demo.basictech.common.exception.BusinessException;
 import com.stone.elm.springboot.demo.basictech.common.response.ResponseConstant;
 import com.stone.elm.springboot.demo.basictech.common.utils.JwtUtil;
@@ -32,7 +35,7 @@ public class JwtAuthenticationTokenFiler extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // 获取token
-        String token = request.getHeader("Stone-Token");
+        String token = request.getHeader(RequestConstant.HEADER_TOKEN);
         if (StringUtils.isBlank(token)) {
             // 放行, 交给其他过滤器处理
             filterChain.doFilter(request, response);
@@ -46,21 +49,21 @@ public class JwtAuthenticationTokenFiler extends OncePerRequestFilter {
             userID = claims.getSubject();
         } catch (Exception e) {
             e.printStackTrace();
-            throw new BusinessException("token解析失败!", ResponseConstant.FAIL);
+            throw new BusinessException("登录鉴权：token解析失败!", ResponseConstant.FAIL);
         }
 
         if (StringUtils.isBlank(userID)) {
-            throw new BusinessException("用户登录信息失效!", ResponseConstant.FAIL);
+            throw new BusinessException("登录鉴权：用户登录信息失效!", ResponseConstant.FAIL);
         }
 
         // 从redis获取用户信息
-        UserInfoVO userInfo = redisCache.getCacheObject("user-" + userID);
+        UserInfoVO userInfo = redisCache.getCacheObject(RedisKeyConstant.USER_TOKEN_LONG + SymbolConstant.BAR + userID);
 
         if (Objects.isNull(userInfo)) {
-            throw new BusinessException("用户登录信息不存在!", ResponseConstant.FAIL);
+            throw new BusinessException("登录鉴权：用户登录信息不存在!", ResponseConstant.FAIL);
         }
 
-        // 存入SecurityContextHolder
+        // 存入 SecurityContextHolder
 
         // todo 获取权限信息到 SecurityContextHolder
 

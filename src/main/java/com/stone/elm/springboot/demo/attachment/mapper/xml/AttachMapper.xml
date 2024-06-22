@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.stone.elm.springboot.demo.attachment.mapper.IAttachMapper" >
+
+    <sql id="attachInsertFields">
+        attach_id,
+        upload_stf,
+        upload_date,
+        attach_name,
+        attach_desc,
+        upload_channel
+    </sql>
+
+    <sql id="attachDtlInsertFields">
+        attach_dtl_id,
+        attach_id,
+        attach_dtl_name,
+        attach_dtl_desc,
+        attach_dtl_path,
+        attach_dtl_fmt,
+        attach_dtl_stat,
+        attach_dtl_size,
+        attach_dtl_categ,
+        attach_dtl_type,
+        attach_dtl_content_type,
+        upload_stf,
+        upload_date
+    </sql>
+
+    <sql id="attachDtlQueryFields">
+        attach_dtl_id as "attachDtlID",
+        attach_id as "attachID",
+        attach_dtl_name as "attachDtlName",
+        attach_dtl_desc as "attachDtlDesc",
+        attach_dtl_path as "attachDtlPath",
+        attach_dtl_fmt as "attachDtlFmt",
+        attach_dtl_stat as "attachDtlStat",
+        attach_dtl_size as "attachDtlSize",
+        attach_dtl_categ as "attachDtlCateg",
+        attach_dtl_type as "attachDtlType",
+        attach_dtl_content_type as "attachDtlContentType",
+        upload_stf as "uploadStf",
+        upload_date as "uploadDate"
+    </sql>
+
+    <insert id="createAttachList">
+        insert into attach (<include refid="attachInsertFields"/>) values
+        <foreach collection="createAttachList" separator="," item="item" index="index">
+            (
+            #{item.attachID},
+            #{item.uploadStf},
+            #{item.uploadDate},
+            #{item.attachName},
+            #{item.attachDesc},
+            #{item.uploadChannel}
+            )
+        </foreach>
+    </insert>
+
+    <insert id="createAttachDtlList">
+        insert into attach_dtl (<include refid="attachDtlInsertFields"/>) values
+        <foreach collection="createAttachDtlList" separator="," item="item" index="index">
+            (
+            #{item.attachDtlID},
+            #{item.attachID},
+            #{item.attachDtlName},
+            #{item.attachDtlDesc},
+            #{item.attachDtlPath},
+            #{item.attachDtlFmt},
+            #{item.attachDtlStat},
+            #{item.attachDtlSize},
+            #{item.attachDtlCateg},
+            #{item.attachDtlType},
+            #{item.attachDtlContentType},
+            #{item.uploadStf},
+            #{item.uploadDate}
+            )
+        </foreach>
+    </insert>
+
+    <sql id="attachDtlQueryParam">
+        <where>
+            <if test="attachID != null and attachID != ''">
+                and t.attach_id = #{attachID}
+            </if>
+            <if test="attachDtlID != null and attachDtlID != ''">
+                and t.attach_dtl_id = #{attachDtlID}
+            </if>
+            <if test="attachIDList != null and attachIDList.size() > 0">
+                and t.attach_id in (
+                <foreach collection="attachIDList" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+            <if test="attachDtlIDList != null and attachDtlIDList.size() > 0">
+                and t.attach_dtl_id in (
+                <foreach collection="attachDtlIDList" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+        </where>
+    </sql>
+
+    <sql id="pageParam">
+        <if test="pageSize != null and pageSize != '' and pageNo != null and pageNo != ''">
+            limit #{indexStart}, #{pageSize}
+        </if>
+    </sql>
+
+    <select id="selectAttachDtlList" resultType="com.stone.elm.springboot.demo.attachment.model.vo.AttachDtlVO">
+        select
+        <include refid="attachDtlQueryFields"/>
+        from attach_dtl t
+        <include refid="attachDtlQueryParam"/>
+        <include refid="pageParam"/>
+    </select>
+</mapper>
