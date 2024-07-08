@@ -2,6 +2,7 @@ package com.stone.elm.springboot.demo.attachment.controller;
 
 import com.stone.elm.springboot.demo.attachment.model.ao.AttachAO;
 import com.stone.elm.springboot.demo.attachment.model.ao.AttachDtlAO;
+import com.stone.elm.springboot.demo.attachment.model.vo.AttachDtlVO;
 import com.stone.elm.springboot.demo.attachment.model.vo.AttachVO;
 import com.stone.elm.springboot.demo.attachment.service.IAttachFileService;
 import com.stone.elm.springboot.demo.basictech.common.response.ResponseResult;
@@ -36,5 +37,23 @@ public class AttachFileController {
     public ResponseEntity<Resource> download (HttpServletRequest request, HttpServletResponse response,
                                               @RequestBody AttachDtlAO attachAO) {
         return iAttachFileService.download(request, response, attachAO);
+    }
+
+    @GetMapping("/download/{attachDtlID}")
+    @ApiOperation(value = "文件下载 维护人:Lan StoneElm")
+    public ResponseEntity<Resource> download (@PathVariable Long attachDtlID) {
+        return iAttachFileService.download(attachDtlID);
+    }
+
+    @GetMapping("/video/{attachDtlID}")
+    @ApiOperation(value = "文件下载 维护人:Lan StoneElm")
+    public ResponseEntity<Resource> video (@PathVariable Long attachDtlID) {
+        return iAttachFileService.video(attachDtlID);
+    }
+
+    @PostMapping("/getDownloadUrl")
+    @ApiOperation(value = "文件下载 维护人:Lan StoneElm")
+    public ResponseResult<AttachDtlVO> getDownloadUrl (@RequestBody AttachDtlAO attachAO) {
+        return iAttachFileService.getDownloadUrl(attachAO);
     }
 }

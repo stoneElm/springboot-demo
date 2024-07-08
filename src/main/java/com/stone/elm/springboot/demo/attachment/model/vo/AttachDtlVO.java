@@ -17,6 +17,7 @@ public class AttachDtlVO {
     private String attachDtlContentType;
     private String uploadStf;
     private String uploadDate;
+    private String downloadUrl;
 
     public Long getAttachDtlID() {
         return attachDtlID;
@@ -120,5 +121,13 @@ public class AttachDtlVO {
 
     public void setUploadDate(String uploadDate) {
         this.uploadDate = uploadDate;
+    }
+
+    public String getDownloadUrl() {
+        return downloadUrl;
+    }
+
+    public void setDownloadUrl(String downloadUrl) {
+        this.downloadUrl = downloadUrl;
     }
 }

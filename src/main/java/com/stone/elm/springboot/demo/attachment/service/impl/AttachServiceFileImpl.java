@@ -7,7 +7,9 @@ import com.stone.elm.springboot.demo.attachment.model.root.AttachDtlRoot;
 import com.stone.elm.springboot.demo.attachment.model.vo.AttachDtlVO;
 import com.stone.elm.springboot.demo.attachment.model.vo.AttachVO;
 import com.stone.elm.springboot.demo.attachment.service.IAttachFileService;
+import com.stone.elm.springboot.demo.basictech.common.constant.CodeClsConstant;
 import com.stone.elm.springboot.demo.basictech.common.constant.NumberConstant;
+import com.stone.elm.springboot.demo.basictech.common.constant.RequestConstant;
 import com.stone.elm.springboot.demo.basictech.common.constant.SymbolConstant;
 import com.stone.elm.springboot.demo.basictech.common.exception.BusinessException;
 import com.stone.elm.springboot.demo.basictech.common.response.ResponseConstant;
@@ -51,6 +53,9 @@ public class AttachServiceFileImpl implements IAttachFileService {
 
     @Value("${local.storage.folder}")
     private String fileFolder;
+
+    @Value("${file-server.address}")
+    private String fileServerAddress;
 
     @Autowired
     private IPrimaryKeyService iPrimaryKeyService;
@@ -124,41 +129,57 @@ public class AttachServiceFileImpl implements IAttachFileService {
     public ResponseEntity<Resource> download(HttpServletRequest request, HttpServletResponse response, AttachDtlAO attachDtlAO) {
         LOGGER.info("附件下载入参:{}", JsonUtil.convertObjectToJson(attachDtlAO));
 
-        if (Objects.isNull(attachDtlAO.getAttachDtlID())) {
-            throw new BusinessException("附件详情标识不能为空", ResponseConstant.FAIL);
-        }
-
-        AttachDtlAO param = new AttachDtlAO();
-        param.setAttachDtlID(attachDtlAO.getAttachDtlID());
-
-        LOGGER.info("查询附件详情信息入参:{}", JsonUtil.convertObjectToJson(param));
-        List<AttachDtlVO> attachDtlList = iAttachMapper.selectAttachDtlList(param);
-        LOGGER.info("查询附件详情信息出参:{}", JsonUtil.convertObjectToJson(attachDtlList));
-
-        if (CollectionUtils.isEmpty(attachDtlList)) {
-            throw new BusinessException("不存在相应的附件详情信息，请检查！", ResponseConstant.FAIL);
-        }
-
-        AttachDtlVO attachDtl = attachDtlList.stream().findFirst().get();
+        AttachDtlVO attachDtl = getAttachDtlOne(attachDtlAO);
         String savePath = fileFolder + attachDtl.getAttachDtlPath();
 
         Path path = Paths.get(savePath);
         try {
             Resource resource = new UrlResource(path.toUri());
 
+            String mediaType = RequestConstant.MEDIA_TYPE_STREAM;
+
+            if (CodeClsConstant.MEDIA_TYPE_VIDEO.equals(attachDtl.getAttachDtlType()) && CodeClsConstant.IS_FLAG_YES.equals(attachDtlAO.getIsVideo())) {
+                mediaType = attachDtl.getAttachDtlContentType();
+            }
+
             if (resource.exists() || resource.isReadable()) {
                 return ResponseEntity.ok()
-                        .contentType(MediaType.parseMediaType("application/octet-stream"))
+                        .contentType(MediaType.parseMediaType(mediaType))
                         .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + attachDtl.getAttachDtlName() + "\"")
                         .body(resource);
             } else {
-                throw new RuntimeException("文件不存在或不可读");
+                throw new BusinessException("文件不存在或不可读！", ResponseConstant.FAIL);
             }
         } catch (MalformedURLException e) {
             e.printStackTrace();
             throw new BusinessException(e.getMessage(), ResponseConstant.FAIL);
         }
 
+    }
+
+    @Override
+    public ResponseEntity<Resource> download(Long attachDtlID) {
+        AttachDtlAO attachDtlAO = new AttachDtlAO();
+        attachDtlAO.setAttachDtlID(attachDtlID);
+        return download(null, null, attachDtlAO);
+    }
+
+    @Override
+    public ResponseEntity<Resource> video(Long attachDtlID) {
+        AttachDtlAO attachDtlAO = new AttachDtlAO();
+        attachDtlAO.setAttachDtlID(attachDtlID);
+        attachDtlAO.setIsVideo(CodeClsConstant.IS_FLAG_YES);
+        return download(null, null, attachDtlAO);
+    }
+
+    @Override
+    public ResponseResult<AttachDtlVO> getDownloadUrl(AttachDtlAO attachAO) {
+        LOGGER.info("获取附件预下载地址入参:{}", JsonUtil.convertObjectToJson(attachAO));
+
+        AttachDtlVO attachDtl = getAttachDtlOne(attachAO);
+        String savePath = fileFolder + attachDtl.getAttachDtlPath();
+
+        return null;
     }
 
     private List<AttachDtlRoot> getAttachDtlListByFiles(MultipartFile[] files, Long attachID, String userName) {
@@ -212,5 +233,27 @@ public class AttachServiceFileImpl implements IAttachFileService {
         }
 
         return result;
+    }
+
+    private AttachDtlVO getAttachDtlOne(AttachDtlAO attachDtlAO) {
+
+        if (Objects.isNull(attachDtlAO.getAttachDtlID())) {
+            throw new BusinessException("附件详情标识不能为空", ResponseConstant.FAIL);
+        }
+
+        AttachDtlAO param = new AttachDtlAO();
+        param.setAttachDtlID(attachDtlAO.getAttachDtlID());
+
+        LOGGER.info("查询附件详情信息入参:{}", JsonUtil.convertObjectToJson(param));
+        List<AttachDtlVO> attachDtlList = iAttachMapper.selectAttachDtlList(param);
+        LOGGER.info("查询附件详情信息出参:{}", JsonUtil.convertObjectToJson(attachDtlList));
+
+        if (CollectionUtils.isEmpty(attachDtlList)) {
+            throw new BusinessException("不存在相应的附件详情信息，请检查！", ResponseConstant.FAIL);
+        }
+
+        AttachDtlVO attachDtl = attachDtlList.stream().findFirst().get();
+
+        return attachDtl;
     }
 }

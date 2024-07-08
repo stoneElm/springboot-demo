@@ -23,6 +23,7 @@ public class AttachDtlAO extends QueryEntity {
     private String uploadStf;
     private String uploadDate;
     private MultipartFile multipartFile;
+    private String isVideo;
 
     public Long getAttachDtlID() {
         return attachDtlID;
@@ -150,5 +151,13 @@ public class AttachDtlAO extends QueryEntity {
 
     public void setMultipartFile(MultipartFile multipartFile) {
         this.multipartFile = multipartFile;
+    }
+
+    public String getIsVideo() {
+        return isVideo;
+    }
+
+    public void setIsVideo(String isVideo) {
+        this.isVideo = isVideo;
     }
 }

@@ -36,6 +36,11 @@ public class JwtAuthenticationTokenFiler extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // 获取token
         String token = request.getHeader(RequestConstant.HEADER_TOKEN);
+
+        if (StringUtils.isBlank(token) && request.getRequestURI().startsWith("/attachment/files/video/")) {
+            token = request.getParameter(RequestConstant.STONE_FILE_TOKEN);
+        }
+
         if (StringUtils.isBlank(token)) {
             // 放行, 交给其他过滤器处理
             filterChain.doFilter(request, response);
