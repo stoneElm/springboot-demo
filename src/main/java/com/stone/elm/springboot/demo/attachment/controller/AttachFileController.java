@@ -36,7 +36,7 @@ public class AttachFileController {
     @ApiOperation(value = "文件下载 维护人:Lan StoneElm")
     public ResponseEntity<Resource> download (HttpServletRequest request, HttpServletResponse response,
                                               @RequestBody AttachDtlAO attachAO) {
-        return iAttachFileService.download(request, response, attachAO);
+        return iAttachFileService.download(request, response, attachAO, false);
     }
 
     @GetMapping("/download/{attachDtlID}")
@@ -45,10 +45,16 @@ public class AttachFileController {
         return iAttachFileService.download(attachDtlID);
     }
 
-    @GetMapping("/video/{attachDtlID}")
+    @GetMapping("/filePreview")
     @ApiOperation(value = "文件下载 维护人:Lan StoneElm")
-    public ResponseEntity<Resource> video (@PathVariable Long attachDtlID) {
-        return iAttachFileService.video(attachDtlID);
+    public ResponseEntity<Resource> filePreview (@RequestParam("attachDtlID") Long attachDtlID) {
+        return iAttachFileService.filePreview(attachDtlID);
+    }
+
+    @PostMapping("/selectAttachDtlList")
+    @ApiOperation(value = "文件下载 维护人:Lan StoneElm")
+    public ResponseResult<List<AttachDtlVO>> selectAttachDtlList (@RequestBody AttachDtlAO attachAO) {
+        return iAttachFileService.selectAttachDtlList(attachAO);
     }
 
     @PostMapping("/getDownloadUrl")

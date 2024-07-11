@@ -1,6 +1,5 @@
 package com.stone.elm.springboot.demo.attachment.model.vo;
 
-import org.springframework.web.multipart.MultipartFile;
 
 public class AttachDtlVO {
 

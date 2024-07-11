@@ -17,11 +17,13 @@ public interface IAttachFileService {
 
     ResponseResult<List<AttachVO>> batchUpload(AttachAO attachAO, MultipartFile... files);
 
-    ResponseEntity<Resource> download(HttpServletRequest request, HttpServletResponse response, AttachDtlAO attachAO);
+    ResponseEntity<Resource> download(HttpServletRequest request, HttpServletResponse response, AttachDtlAO attachAO, Boolean previewFlag);
 
     ResponseEntity<Resource> download(Long AttachDtlID);
 
-    ResponseEntity<Resource> video(Long attachDtlID);
+    ResponseEntity<Resource> filePreview(Long attachDtlID);
 
     ResponseResult<AttachDtlVO> getDownloadUrl(AttachDtlAO attachAO);
+
+    ResponseResult<List<AttachDtlVO>> selectAttachDtlList(AttachDtlAO attachAO);
 }

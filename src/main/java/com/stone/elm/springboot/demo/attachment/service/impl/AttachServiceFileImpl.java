@@ -126,7 +126,7 @@ public class AttachServiceFileImpl implements IAttachFileService {
     }
 
     @Override
-    public ResponseEntity<Resource> download(HttpServletRequest request, HttpServletResponse response, AttachDtlAO attachDtlAO) {
+    public ResponseEntity<Resource> download(HttpServletRequest request, HttpServletResponse response, AttachDtlAO attachDtlAO, Boolean previewFlag) {
         LOGGER.info("附件下载入参:{}", JsonUtil.convertObjectToJson(attachDtlAO));
 
         AttachDtlVO attachDtl = getAttachDtlOne(attachDtlAO);
@@ -138,7 +138,7 @@ public class AttachServiceFileImpl implements IAttachFileService {
 
             String mediaType = RequestConstant.MEDIA_TYPE_STREAM;
 
-            if (CodeClsConstant.MEDIA_TYPE_VIDEO.equals(attachDtl.getAttachDtlType()) && CodeClsConstant.IS_FLAG_YES.equals(attachDtlAO.getIsVideo())) {
+            if (previewFlag) {
                 mediaType = attachDtl.getAttachDtlContentType();
             }
 
@@ -161,15 +161,15 @@ public class AttachServiceFileImpl implements IAttachFileService {
     public ResponseEntity<Resource> download(Long attachDtlID) {
         AttachDtlAO attachDtlAO = new AttachDtlAO();
         attachDtlAO.setAttachDtlID(attachDtlID);
-        return download(null, null, attachDtlAO);
+        return download(null, null, attachDtlAO, false);
     }
 
     @Override
-    public ResponseEntity<Resource> video(Long attachDtlID) {
+    public ResponseEntity<Resource> filePreview(Long attachDtlID) {
         AttachDtlAO attachDtlAO = new AttachDtlAO();
         attachDtlAO.setAttachDtlID(attachDtlID);
         attachDtlAO.setIsVideo(CodeClsConstant.IS_FLAG_YES);
-        return download(null, null, attachDtlAO);
+        return download(null, null, attachDtlAO, true);
     }
 
     @Override
@@ -180,6 +180,12 @@ public class AttachServiceFileImpl implements IAttachFileService {
         String savePath = fileFolder + attachDtl.getAttachDtlPath();
 
         return null;
+    }
+
+    @Override
+    public ResponseResult<List<AttachDtlVO>> selectAttachDtlList(AttachDtlAO attachAO) {
+        List<AttachDtlVO> resultData = getAttachDtlAll(attachAO);
+        return ResultUtils.wrapResult(resultData);
     }
 
     private List<AttachDtlRoot> getAttachDtlListByFiles(MultipartFile[] files, Long attachID, String userName) {
@@ -244,16 +250,23 @@ public class AttachServiceFileImpl implements IAttachFileService {
         AttachDtlAO param = new AttachDtlAO();
         param.setAttachDtlID(attachDtlAO.getAttachDtlID());
 
-        LOGGER.info("查询附件详情信息入参:{}", JsonUtil.convertObjectToJson(param));
-        List<AttachDtlVO> attachDtlList = iAttachMapper.selectAttachDtlList(param);
+        List<AttachDtlVO> attachDtlList = getAttachDtlAll(param);
+
+        AttachDtlVO attachDtl = attachDtlList.stream().findFirst().get();
+
+        return attachDtl;
+    }
+
+    private List<AttachDtlVO> getAttachDtlAll(AttachDtlAO attachDtlAO) {
+
+        LOGGER.info("查询附件详情信息入参:{}", JsonUtil.convertObjectToJson(attachDtlAO));
+        List<AttachDtlVO> attachDtlList = iAttachMapper.selectAttachDtlList(attachDtlAO);
         LOGGER.info("查询附件详情信息出参:{}", JsonUtil.convertObjectToJson(attachDtlList));
 
         if (CollectionUtils.isEmpty(attachDtlList)) {
             throw new BusinessException("不存在相应的附件详情信息，请检查！", ResponseConstant.FAIL);
         }
 
-        AttachDtlVO attachDtl = attachDtlList.stream().findFirst().get();
-
-        return attachDtl;
+        return attachDtlList;
     }
 }

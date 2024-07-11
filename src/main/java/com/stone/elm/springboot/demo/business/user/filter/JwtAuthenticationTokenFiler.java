@@ -37,7 +37,9 @@ public class JwtAuthenticationTokenFiler extends OncePerRequestFilter {
         // 获取token
         String token = request.getHeader(RequestConstant.HEADER_TOKEN);
 
-        if (StringUtils.isBlank(token) && request.getRequestURI().startsWith("/attachment/files/video/")) {
+        Boolean previewFlag = request.getRequestURI().startsWith("/attachment/files/filePreview");
+
+        if (StringUtils.isBlank(token) && previewFlag) {
             token = request.getParameter(RequestConstant.STONE_FILE_TOKEN);
         }
 
