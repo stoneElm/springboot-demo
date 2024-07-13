@@ -87,9 +87,9 @@ public class UserLoginServiceImpl implements IUserLoginService {
         }
 
         // 通过了，生成jwt
-        String jwt = JwtUtil.createJWT(userInfo.getUserID().toString());
+        String jwt = JwtUtil.createJWT(userInfo.getUserID().toString(), JwtUtil.JWT_TTL_ONE_DAY);
         resultData.setToken(jwt);
-        String fileJwt = JwtUtil.createJWT(userInfo.getUserID().toString());
+        String fileJwt = JwtUtil.createJWT(userInfo.getUserID().toString(), JwtUtil.JWT_TTL_ONE_DAY);
         resultData.setFileToken(fileJwt);
 
         UserInfoVO redisUserInfo = new UserInfoVO();

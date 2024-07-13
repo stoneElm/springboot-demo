@@ -11,4 +11,6 @@ public class SymbolConstant {
     public final static String BAR = "-";
 
     public final static String BLANK = " ";
+
+    public final static String UNDERLINE = "_";
 }
