@@ -16,10 +16,7 @@ import com.stone.elm.springboot.demo.basictech.common.response.ResponseConstant;
 import com.stone.elm.springboot.demo.basictech.common.response.ResponseResult;
 import com.stone.elm.springboot.demo.basictech.common.response.ResultUtils;
 import com.stone.elm.springboot.demo.basictech.common.service.IPrimaryKeyService;
-import com.stone.elm.springboot.demo.basictech.common.utils.AuthenticationUtil;
-import com.stone.elm.springboot.demo.basictech.common.utils.BeanCopyUtil;
-import com.stone.elm.springboot.demo.basictech.common.utils.DateUtils;
-import com.stone.elm.springboot.demo.basictech.common.utils.JsonUtil;
+import com.stone.elm.springboot.demo.basictech.common.utils.*;
 import com.stone.elm.springboot.demo.business.user.model.vo.UserInfoVO;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -142,10 +139,12 @@ public class AttachServiceFileImpl implements IAttachFileService {
                 mediaType = attachDtl.getAttachDtlContentType();
             }
 
+            String fileName = StoneStringUtil.strUTFToISO(attachDtl.getAttachDtlName());
+
             if (resource.exists() || resource.isReadable()) {
                 return ResponseEntity.ok()
                         .contentType(MediaType.parseMediaType(mediaType))
-                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + attachDtl.getAttachDtlName() + "\"")
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
                         .body(resource);
             } else {
                 throw new BusinessException("文件不存在或不可读！", ResponseConstant.FAIL);

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Service
 public class PrimaryKeyServiceImpl implements IPrimaryKeyService {
@@ -30,29 +31,36 @@ public class PrimaryKeyServiceImpl implements IPrimaryKeyService {
         return getPrimaryKey(PrimaryKeySymbolConstant.TACTICS_COMMON);
     }
 
+    private final ReentrantLock lock = new ReentrantLock();
+
     @Override
     public Long getPrimaryKey(String symbol) {
-        if (StringUtils.isBlank(symbol)) {
-            symbol = PrimaryKeySymbolConstant.TACTICS_COMMON;
+        lock.lock(); // 加锁
+        try{
+            if (StringUtils.isBlank(symbol)) {
+                symbol = PrimaryKeySymbolConstant.TACTICS_COMMON;
+            }
+
+            String sixDigitDay = DateUtils.getCurrentSixDigitDay();
+
+            // 得到 1424010100000001
+            Long result = Long.parseLong(netPointCode + sixDigitDay) * NumberConstant.LONG_ONE_HUNDRED_MILLION;
+
+            String redisKey = RedisKeyConstant.PRIMARY_KEY + SymbolConstant.BAR + symbol + SymbolConstant.BAR + sixDigitDay;
+
+            Long redisPK =  redisCache.getCacheObject(redisKey);
+
+            if (Objects.isNull(redisPK)) {
+                result++;
+                redisCache.setCacheObject(redisKey, result, NumberConstant.ONE, TimeUnit.DAYS);
+                return result;
+            }
+
+            redisPK++;
+            redisCache.setCacheObject(redisKey, redisPK, NumberConstant.ONE, TimeUnit.DAYS);
+            return redisPK;
+        } finally {
+            lock.unlock(); // 解锁
         }
-
-        String sixDigitDay = DateUtils.getCurrentSixDigitDay();
-
-        // 得到 1424010100000001
-        Long result = Long.parseLong(netPointCode + sixDigitDay) * NumberConstant.LONG_ONE_HUNDRED_MILLION;
-
-        String redisKey = RedisKeyConstant.PRIMARY_KEY + SymbolConstant.BAR + symbol + SymbolConstant.BAR + sixDigitDay;
-
-        Long redisPK =  redisCache.getCacheObject(redisKey);
-
-        if (Objects.isNull(redisPK)) {
-            result++;
-            redisCache.setCacheObject(redisKey, result, NumberConstant.ONE, TimeUnit.DAYS);
-            return result;
-        }
-
-        redisPK++;
-        redisCache.setCacheObject(redisKey, redisPK, NumberConstant.ONE, TimeUnit.DAYS);
-        return redisPK;
     }
 }
