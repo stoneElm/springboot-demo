@@ -187,6 +187,41 @@ public class AttachServiceFileImpl implements IAttachFileService {
         return ResultUtils.wrapResult(resultData);
     }
 
+    @Override
+    public ResponseResult<List<AttachDtlVO>> deleteAttachDtlByID(AttachDtlAO attachAO) {
+        LOGGER.info("通过文件详情标识删除文件信息入参:{}", JsonUtil.convertObjectToJson(attachAO));
+
+        if (Objects.isNull(attachAO.getAttachDtlID())) {
+            throw new BusinessException("文件详情唯一标识不能为空！", ResponseConstant.FAIL);
+        }
+
+        AttachDtlVO attachDtl = getAttachDtlOne(attachAO);
+
+        Path path = Paths.get(fileFolder + attachDtl.getAttachDtlPath());
+
+        Resource resource;
+        try {
+            resource = new UrlResource(path.toUri());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            throw new BusinessException("文件路径解析失败！", ResponseConstant.FAIL);
+        }
+
+        if (resource.exists() || resource.isReadable()) {
+            try {
+                File file = resource.getFile();
+                LOGGER.info("开始删除文件:{}", fileFolder + attachDtl.getAttachDtlPath());
+                file.delete();
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new BusinessException("从Resource获取文件失败！", ResponseConstant.FAIL);
+            }
+        }
+
+        ArrayList<AttachDtlVO> resultData = new ArrayList<>();
+        return ResultUtils.wrapResult(resultData);
+    }
+
     private List<AttachDtlRoot> getAttachDtlListByFiles(MultipartFile[] files, Long attachID, String userName) {
         List<AttachDtlRoot> result = new ArrayList<>();
 

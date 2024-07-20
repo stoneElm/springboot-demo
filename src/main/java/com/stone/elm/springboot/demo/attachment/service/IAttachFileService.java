@@ -26,4 +26,6 @@ public interface IAttachFileService {
     ResponseResult<AttachDtlVO> getDownloadUrl(AttachDtlAO attachAO);
 
     ResponseResult<List<AttachDtlVO>> selectAttachDtlList(AttachDtlAO attachAO);
+
+    ResponseResult<List<AttachDtlVO>> deleteAttachDtlByID(AttachDtlAO attachAO);
 }
