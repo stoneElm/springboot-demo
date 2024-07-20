@@ -2,6 +2,7 @@ package com.stone.elm.springboot.demo.attachment.controller;
 
 import com.stone.elm.springboot.demo.attachment.model.ao.AttachAO;
 import com.stone.elm.springboot.demo.attachment.model.ao.AttachDtlAO;
+import com.stone.elm.springboot.demo.attachment.model.root.AttachDtlRoot;
 import com.stone.elm.springboot.demo.attachment.model.vo.AttachDtlVO;
 import com.stone.elm.springboot.demo.attachment.model.vo.AttachVO;
 import com.stone.elm.springboot.demo.attachment.service.IAttachFileService;
@@ -28,7 +29,7 @@ public class AttachFileController {
 
     @PostMapping("/batchUpload")
     @ApiOperation(value = "批量文件上传 维护人:Lan StoneElm")
-    public ResponseResult<List<AttachVO>> batchUpload (AttachAO attachAO, @RequestParam("files") MultipartFile... files) {
+    public ResponseResult<List<AttachDtlRoot>> batchUpload (AttachAO attachAO, @RequestParam("files") MultipartFile... files) {
         return iAttachFileService.batchUpload(attachAO, files);
     }
 

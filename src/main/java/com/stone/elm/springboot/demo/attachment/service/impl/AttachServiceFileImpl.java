@@ -66,7 +66,7 @@ public class AttachServiceFileImpl implements IAttachFileService {
      * @return
      */
     @Override
-    public ResponseResult<List<AttachVO>> batchUpload(AttachAO attachAO, MultipartFile... files) {
+    public ResponseResult<List<AttachDtlRoot>> batchUpload(AttachAO attachAO, MultipartFile... files) {
         // 获取当前登陆人信息
         UserInfoVO userInfo = AuthenticationUtil.getUserAndRoleInfo();
 
@@ -119,7 +119,7 @@ public class AttachServiceFileImpl implements IAttachFileService {
         ArrayList<AttachVO> resultData = new ArrayList<>();
         resultData.add(attachVO);
 
-        return ResultUtils.wrapResult(resultData);
+        return ResultUtils.wrapResult(attachDtlList);
     }
 
     @Override
