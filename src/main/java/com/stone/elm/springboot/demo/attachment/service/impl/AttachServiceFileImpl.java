@@ -197,6 +197,13 @@ public class AttachServiceFileImpl implements IAttachFileService {
 
         AttachDtlVO attachDtl = getAttachDtlOne(attachAO);
 
+        // 删除数据库
+        ArrayList<AttachDtlAO> deleteAttachDtlList = new ArrayList<>();
+        deleteAttachDtlList.add(attachAO);
+        LOGGER.info("删除文件详情信息信息入参:{}", JsonUtil.convertObjectToJson(deleteAttachDtlList));
+        Integer integer = iAttachMapper.deleteAttachDtlList(deleteAttachDtlList);
+        LOGGER.info("成功删除数据:{}条", integer);
+
         Path path = Paths.get(fileFolder + attachDtl.getAttachDtlPath());
 
         Resource resource;
@@ -218,7 +225,10 @@ public class AttachServiceFileImpl implements IAttachFileService {
             }
         }
 
+        AttachDtlVO attachDtlVO = new AttachDtlVO();
+        BeanCopyUtil.copy(attachAO, attachDtlVO);
         ArrayList<AttachDtlVO> resultData = new ArrayList<>();
+        resultData.add(attachDtlVO);
         return ResultUtils.wrapResult(resultData);
     }
 

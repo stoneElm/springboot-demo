@@ -116,4 +116,12 @@
         <include refid="attachDtlQueryParam"/>
         <include refid="pageParam"/>
     </select>
+
+    <delete id="deleteAttachDtlList">
+        delete from attach_dtl where attach_dtl_id in (
+        <foreach collection="deleteAttachDtlList" item="item" index="index" open="" close="" separator=",">
+            #{item.attachDtlID}
+        </foreach>
+        )
+    </delete>
 </mapper>
