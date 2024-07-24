@@ -17,9 +17,9 @@ public interface IAttachFileService {
 
     ResponseResult<List<AttachDtlRoot>> batchUpload(AttachAO attachAO, MultipartFile... files);
 
-    ResponseEntity<Resource> download(HttpServletRequest request, HttpServletResponse response, AttachDtlAO attachAO, Boolean previewFlag);
+    void download(HttpServletRequest request, HttpServletResponse response, AttachDtlAO attachAO);
 
-    ResponseEntity<Resource> download(Long AttachDtlID);
+    void download(HttpServletRequest request, HttpServletResponse response, Long AttachDtlID);
 
     ResponseEntity<Resource> filePreview(Long attachDtlID);
 

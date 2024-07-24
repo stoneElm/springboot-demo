@@ -7,9 +7,7 @@ import com.stone.elm.springboot.demo.attachment.model.root.AttachDtlRoot;
 import com.stone.elm.springboot.demo.attachment.model.vo.AttachDtlVO;
 import com.stone.elm.springboot.demo.attachment.model.vo.AttachVO;
 import com.stone.elm.springboot.demo.attachment.service.IAttachFileService;
-import com.stone.elm.springboot.demo.basictech.common.constant.CodeClsConstant;
 import com.stone.elm.springboot.demo.basictech.common.constant.NumberConstant;
-import com.stone.elm.springboot.demo.basictech.common.constant.RequestConstant;
 import com.stone.elm.springboot.demo.basictech.common.constant.SymbolConstant;
 import com.stone.elm.springboot.demo.basictech.common.exception.BusinessException;
 import com.stone.elm.springboot.demo.basictech.common.response.ResponseConstant;
@@ -20,6 +18,7 @@ import com.stone.elm.springboot.demo.basictech.common.utils.*;
 import com.stone.elm.springboot.demo.business.user.model.vo.UserInfoVO;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,10 +31,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -123,52 +124,65 @@ public class AttachServiceFileImpl implements IAttachFileService {
     }
 
     @Override
-    public ResponseEntity<Resource> download(HttpServletRequest request, HttpServletResponse response, AttachDtlAO attachDtlAO, Boolean previewFlag) {
+    public void download(HttpServletRequest request, HttpServletResponse response, AttachDtlAO attachDtlAO) {
         LOGGER.info("附件下载入参:{}", JsonUtil.convertObjectToJson(attachDtlAO));
 
         AttachDtlVO attachDtl = getAttachDtlOne(attachDtlAO);
-        String savePath = fileFolder + attachDtl.getAttachDtlPath();
+        Resource resource = getResourceByAttachDtl(attachDtl);
 
-        Path path = Paths.get(savePath);
+        String fileName = StoneStringUtil.strUTFToISO(attachDtl.getAttachDtlName());
+
+        InputStream inputStream = null;
+        ServletOutputStream outputStream = null;
         try {
-            Resource resource = new UrlResource(path.toUri());
+            inputStream = resource.getInputStream();
+            outputStream = response.getOutputStream();
+            IOUtils.copy(inputStream, outputStream);
 
-            String mediaType = RequestConstant.MEDIA_TYPE_STREAM;
+            response.setContentType("application/force-download");
+            response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"");
 
-            if (previewFlag) {
-                mediaType = attachDtl.getAttachDtlContentType();
-            }
-
-            String fileName = StoneStringUtil.strUTFToISO(attachDtl.getAttachDtlName());
-
-            if (resource.exists() || resource.isReadable()) {
-                return ResponseEntity.ok()
-                        .contentType(MediaType.parseMediaType(mediaType))
-                        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
-                        .body(resource);
-            } else {
-                throw new BusinessException("文件不存在或不可读！", ResponseConstant.FAIL);
-            }
-        } catch (MalformedURLException e) {
+            response.flushBuffer();
+        } catch (IOException e) {
             e.printStackTrace();
-            throw new BusinessException(e.getMessage(), ResponseConstant.FAIL);
-        }
+        } finally {
+            try{
+                if (outputStream != null){
+                    outputStream.close();
+                }
+                if (inputStream != null){
+                    inputStream.close();
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
 
+        }
     }
 
     @Override
-    public ResponseEntity<Resource> download(Long attachDtlID) {
+    public void download(HttpServletRequest request, HttpServletResponse response, Long attachDtlID) {
         AttachDtlAO attachDtlAO = new AttachDtlAO();
         attachDtlAO.setAttachDtlID(attachDtlID);
-        return download(null, null, attachDtlAO, false);
+        download(request, response, attachDtlAO);
     }
 
     @Override
     public ResponseEntity<Resource> filePreview(Long attachDtlID) {
+        LOGGER.info("附件预览入参:{}", attachDtlID);
+
         AttachDtlAO attachDtlAO = new AttachDtlAO();
         attachDtlAO.setAttachDtlID(attachDtlID);
-        attachDtlAO.setIsVideo(CodeClsConstant.IS_FLAG_YES);
-        return download(null, null, attachDtlAO, true);
+
+        AttachDtlVO attachDtl = getAttachDtlOne(attachDtlAO);
+        Resource resource = getResourceByAttachDtl(attachDtl);
+
+        String fileName = StoneStringUtil.strUTFToISO(attachDtl.getAttachDtlName());
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(attachDtl.getAttachDtlContentType()))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+                .body(resource);
     }
 
     @Override
@@ -230,6 +244,24 @@ public class AttachServiceFileImpl implements IAttachFileService {
         ArrayList<AttachDtlVO> resultData = new ArrayList<>();
         resultData.add(attachDtlVO);
         return ResultUtils.wrapResult(resultData);
+    }
+
+    private Resource getResourceByAttachDtl(AttachDtlVO attachDtl) {
+        String savePath = fileFolder + attachDtl.getAttachDtlPath();
+
+        Path path = Paths.get(savePath);
+        try {
+            Resource resource = new UrlResource(path.toUri());
+
+            if (resource.exists() || resource.isReadable()) {
+                return resource;
+            } else {
+                throw new BusinessException("文件不存在或不可读！", ResponseConstant.FAIL);
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            throw new BusinessException(e.getMessage(), ResponseConstant.FAIL);
+        }
     }
 
     private List<AttachDtlRoot> getAttachDtlListByFiles(MultipartFile[] files, Long attachID, String userName) {
