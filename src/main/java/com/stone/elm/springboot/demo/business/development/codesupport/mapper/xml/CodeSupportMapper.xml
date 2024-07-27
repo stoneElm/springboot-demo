@@ -5,10 +5,13 @@
         SELECT TABLE_NAME, TABLE_COMMENT
         FROM INFORMATION_SCHEMA.TABLES
         WHERE TABLE_SCHEMA = (SELECT DATABASE())
+        <if test="tableName != null and tableName != ''">
+            and (TABLE_NAME like CONCAT('%', #{tableName}, '%') OR TABLE_COMMENT like CONCAT('%', #{tableName}, '%'))
+        </if>
         ORDER BY TABLE_NAME ASC
     </select>
     
-    <select id="selectColumnList" resultType="com.stone.elm.springboot.demo.business.development.codesupport.model.vo.TableQueryVO">
+    <select id="selectColumnList" resultType="com.stone.elm.springboot.demo.business.development.codesupport.model.vo.ColumnQueryVO">
         SELECT COLUMN_NAME, COLUMN_COMMENT
         FROM INFORMATION_SCHEMA.COLUMNS
         WHERE TABLE_SCHEMA = (SELECT DATABASE()) AND TABLE_NAME = #{tableName}

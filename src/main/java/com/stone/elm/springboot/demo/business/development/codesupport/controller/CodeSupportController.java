@@ -1,6 +1,7 @@
 package com.stone.elm.springboot.demo.business.development.codesupport.controller;
 
 import com.stone.elm.springboot.demo.basictech.common.response.ResponseResult;
+import com.stone.elm.springboot.demo.business.development.codesupport.model.ao.ColumnQueryAO;
 import com.stone.elm.springboot.demo.business.development.codesupport.model.ao.TableQueryAO;
 import com.stone.elm.springboot.demo.business.development.codesupport.model.vo.TableQueryVO;
 import com.stone.elm.springboot.demo.business.development.codesupport.service.ICodeSupportService;
@@ -29,5 +30,12 @@ public class CodeSupportController {
     public ResponseResult<List<TableQueryVO>> selectTableList (
             @ApiParam(name = "TableQueryAO", value = "数据表查询AO") @RequestBody TableQueryAO tableQueryAO) {
         return iCodeSupportService.selectTableList(tableQueryAO);
+    }
+
+    @PostMapping("/produceCURDCode")
+    @ApiOperation(value = "生成增删查改的代码 维护人:Lan StoneElm")
+    public ResponseResult<List<String>> produceCURDCode (
+            @ApiParam(name = "ColumnQueryAO", value = "数据字段查询AO") @RequestBody ColumnQueryAO columnQueryAO) {
+        return iCodeSupportService.produceCURDCode(columnQueryAO);
     }
 }
