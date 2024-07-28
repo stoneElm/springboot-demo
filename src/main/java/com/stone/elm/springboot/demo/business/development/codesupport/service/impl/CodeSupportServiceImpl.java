@@ -332,7 +332,7 @@ public class CodeSupportServiceImpl implements ICodeSupportService {
         resultSB.append(TAB + TAB + "select count(1)" + LINE);
         resultSB.append(TAB + TAB + "from " + tableQueryVO.getTableName() + " t" + LINE);
         resultSB.append(TAB + TAB + "<include refid=\"" + var2 + "QueryParam\"/>" + LINE);
-        resultSB.append(TAB + "</select>" + LINE);
+        resultSB.append(TAB + "</select>" + LINE + LINE);
 
         resultSB.append(TAB + "<insert id=\"create" + var1 + "List\">" + LINE);
         resultSB.append(TAB + TAB + "insert into " + tableQueryVO.getTableName() + "(<include refid=\"" + var2 + "InsertFields\"/>) values" + LINE);
