@@ -5,8 +5,11 @@
         SELECT TABLE_NAME, TABLE_COMMENT
         FROM INFORMATION_SCHEMA.TABLES
         WHERE TABLE_SCHEMA = (SELECT DATABASE())
+        <if test="likeTableName != null and likeTableName != ''">
+            and (TABLE_NAME like CONCAT('%', #{likeTableName}, '%') OR TABLE_COMMENT like CONCAT('%', #{likeTableName}, '%'))
+        </if>
         <if test="tableName != null and tableName != ''">
-            and (TABLE_NAME like CONCAT('%', #{tableName}, '%') OR TABLE_COMMENT like CONCAT('%', #{tableName}, '%'))
+            and TABLE_NAME = #{tableName}
         </if>
         ORDER BY TABLE_NAME ASC
     </select>
@@ -15,5 +18,15 @@
         SELECT COLUMN_NAME, COLUMN_COMMENT
         FROM INFORMATION_SCHEMA.COLUMNS
         WHERE TABLE_SCHEMA = (SELECT DATABASE()) AND TABLE_NAME = #{tableName}
+    </select>
+
+    <select id="selectTablePK" resultType="com.stone.elm.springboot.demo.business.development.codesupport.model.vo.ColumnQueryVO">
+        SELECT COLUMN_NAME
+        FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+        WHERE TABLE_SCHEMA = (SELECT DATABASE())
+        <if test="tableName != null and tableName != ''">
+            AND TABLE_NAME = #{tableName}
+        </if>
+        AND CONSTRAINT_NAME = 'PRIMARY';
     </select>
 </mapper>

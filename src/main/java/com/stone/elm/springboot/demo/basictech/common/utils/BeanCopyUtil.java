@@ -60,6 +60,10 @@ public class BeanCopyUtil {
         }
     }
 
+    public static <T> List<?> copyList(List srcList, Class<?> destClazz) {
+        return JsonUtil.convertObjectToList(JsonUtil.convertObjectToJson(srcList), destClazz);
+    }
+
     public static Field[] getAllFields(Object object) {
         Class<?> clazz = object.getClass();
 

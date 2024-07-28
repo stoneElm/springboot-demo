@@ -12,6 +12,9 @@ public class TableQueryAO {
     @ApiModelProperty(value = "数据表名称")
     private String tableName;
 
+    @ApiModelProperty(value = "数据表名称")
+    private String likeTableName;
+
     public String getTableSchema() {
         return tableSchema;
     }
@@ -26,5 +29,13 @@ public class TableQueryAO {
 
     public void setTableName(String tableName) {
         this.tableName = tableName;
+    }
+
+    public String getLikeTableName() {
+        return likeTableName;
+    }
+
+    public void setLikeTableName(String likeTableName) {
+        this.likeTableName = likeTableName;
     }
 }

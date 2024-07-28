@@ -14,4 +14,6 @@ public interface CodeSupportMapper {
     List<TableQueryVO> selectTableList(TableQueryAO tableQueryAO);
 
     List<ColumnQueryVO> selectColumnList(ColumnQueryAO columnQueryAO);
+
+    List<ColumnQueryVO> selectTablePK(TableQueryAO tableQueryAO);
 }
