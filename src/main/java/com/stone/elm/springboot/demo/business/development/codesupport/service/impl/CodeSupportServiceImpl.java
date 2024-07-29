@@ -73,10 +73,10 @@ public class CodeSupportServiceImpl implements ICodeSupportService {
                 resultSB = produceAVOClass(tableQueryVO, columnList, "VO", tablePK);
                 break;
             case "03":
-                resultSB = produceController(tableQueryVO, columnList);
+                resultSB = produceController(tableQueryVO);
                 break;
             case "04":
-                resultSB = produceService(tableQueryVO, columnList);
+                resultSB = produceService(tableQueryVO);
                 break;
             case "05":
                 resultSB = produceServiceImpl(tableQueryVO, tablePK);
@@ -86,6 +86,9 @@ public class CodeSupportServiceImpl implements ICodeSupportService {
                 break;
             case "07":
                 resultSB = produceMapperXML(tableQueryVO, tablePK, columnList);
+                break;
+            case "08":
+                resultSB = produceJSONParam(columnList);
                 break;
         }
 
@@ -113,11 +116,14 @@ public class CodeSupportServiceImpl implements ICodeSupportService {
         resultSB.append(LINE);
 
         for (ColumnQueryVO columnQueryVO : columnList) {
-            if (StringUtils.equals(tablePK, columnQueryVO.getColumnName())) {
+            if (StringUtils.equals(tablePK, columnQueryVO.getColumnName()) && StringUtils.equals(model, "AO")) {
                 resultSB.append(TAB + "@NotNull(message = " + QUOTE + columnQueryVO.getColumnComment() + "不能为空" + QUOTE + ", groups = {updateGroup.class, deleteGroup.class})" + LINE);
             }
             resultSB.append(TAB + "@ApiModelProperty(value = " + QUOTE + columnQueryVO.getColumnComment() + QUOTE + ")" + LINE);
-            resultSB.append(TAB + "private String " + getHump(columnQueryVO.getColumnName()) + ";" + LINE);
+
+            String var2 = columnQueryVO.getColumnName().endsWith("_id")? "Long ": "String ";
+
+            resultSB.append(TAB + "private " + var2 + getHump(columnQueryVO.getColumnName()) + ";" + LINE);
             resultSB.append(LINE);
         }
 
@@ -126,7 +132,7 @@ public class CodeSupportServiceImpl implements ICodeSupportService {
         return resultSB;
     }
 
-    private StringBuilder produceController(TableQueryVO tableQueryVO, List<ColumnQueryVO> columnList) {
+    private StringBuilder produceController(TableQueryVO tableQueryVO) {
         StringBuilder resultSB = new StringBuilder();
         resultSB.append("@Api(tags = " + QUOTE + "_____/" + tableQueryVO.getTableComment() + "维护" + QUOTE + ")" + LINE);
         resultSB.append("@RestController(" + QUOTE + tableCapitalStart(tableQueryVO.getTableName()) + "Controller" + QUOTE + ")" + LINE);
@@ -145,7 +151,7 @@ public class CodeSupportServiceImpl implements ICodeSupportService {
         return resultSB;
     }
 
-    private StringBuilder produceService(TableQueryVO tableQueryVO, List<ColumnQueryVO> columnList) {
+    private StringBuilder produceService(TableQueryVO tableQueryVO) {
         StringBuilder resultSB = new StringBuilder();
 
         String var1 = tableCapitalStart(tableQueryVO.getTableName());
@@ -236,7 +242,7 @@ public class CodeSupportServiceImpl implements ICodeSupportService {
             resultSB.append(TAB + TAB + "BeanCopyUtil.copyList(" + var4 + ", resultData, " + var1 + "VO.class);" + LINE);
             resultSB.append(LINE);
         } else {
-            resultSB.append(TAB + TAB + "List<" + var1 + "VO> resultData = codeClsMapper." + type + var1 + "List(" + var2+ "AO);" + LINE);
+            resultSB.append(TAB + TAB + "List<" + var1 + "VO> resultData = " + var2 + "Mapper." + type + var1 + "List(" + var2+ "AO);" + LINE);
             resultSB.append(TAB + TAB + "LOGGER.info(" + QUOTE + "根据条件查询" + tableQueryVO.getTableComment() + "信息列表出差:{}" + QUOTE + ", JsonUtil.convertObjectToJson(resultData));" + LINE);
             resultSB.append(LINE);
 
@@ -317,7 +323,7 @@ public class CodeSupportServiceImpl implements ICodeSupportService {
             resultSB.append(LINE);
         }
         resultSB.append(TAB + "</sql>" + LINE + LINE);
-        resultSB.append(TAB + "<sql id=\"codeClsQueryParam\">\n" + TAB + TAB + "<where>" + LINE);
+        resultSB.append(TAB + "<sql id=\"" + var2 + "QueryParam\">\n" + TAB + TAB + "<where>" + LINE);
         for (int i = 0; i < columnList.size(); i++) {
             resultSB.append(TAB + TAB + TAB + "<if test=\"" + getHump(columnList.get(i).getColumnName()) + " != null and " + getHump(columnList.get(i).getColumnName()) + " != ''\">" + LINE);
             resultSB.append(TAB + TAB + TAB + TAB + "and t." + columnList.get(i).getColumnName() + " = #{" + getHump(columnList.get(i).getColumnName()) + "}" + LINE);
@@ -392,13 +398,28 @@ public class CodeSupportServiceImpl implements ICodeSupportService {
         return resultSB;
     }
 
+    private StringBuilder produceJSONParam(List<ColumnQueryVO> columnList) {
+        StringBuilder resultSB = new StringBuilder();
+        resultSB.append("{" + LINE);
+        for (int i = 0; i < columnList.size(); i++) {
+            ColumnQueryVO column = columnList.get(i);
+            resultSB.append(TAB + QUOTE + getHump(column.getColumnName()) + QUOTE + ": " + QUOTE + column.getColumnComment() + QUOTE);
+            if (i != columnList.size() - 1) {
+                resultSB.append(",");
+            }
+            resultSB.append(LINE);
+        }
+        resultSB.append("}");
+        return resultSB;
+    }
+
     private String getSelectController(TableQueryVO tableQueryVO, String type, String desc) {
         StringBuilder resultSB = new StringBuilder();
 
         String var1 = tableCapitalStart(tableQueryVO.getTableName());
         String var2 = getHump(tableQueryVO.getTableName());
 
-        String ao = StringUtils.equals(type, "select")? var1 + "AO " + var2 + "AO":
+        String ao = StringUtils.equals(type, "select")? "@Validated(" + var1 + "AO." + type + "Group.class) " + var1 + "AO " + var2 + "AO":
                 "@Validated(" + var1 + "AO." + type + "Group.class) ValidList<" + var1 + "AO> " + var2 + "List";
 
         String param = StringUtils.equals(type, "select")? "AO": "List";

@@ -7,7 +7,8 @@ public enum ProduceCodeEnum {
     SERVICE("04", "生成Service"),
     SERVICE_IMPL("05", "生成ServiceImpl"),
     MAPPER("06", "生成Mapper"),
-    MAPPER_XML("07", "生成MapperXML");
+    MAPPER_XML("07", "生成MapperXML"),
+    JSON_PARAM("08", "生成JSON入参");
 
     ProduceCodeEnum(String typeCode, String typeDesc) {
         this.typeCode = typeCode;

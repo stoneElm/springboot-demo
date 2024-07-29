@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.stone.elm.springboot.demo.business.personalcenter.personaldocument.mapper.PersonalDocMapper" >
+
+    <sql id="personalDocInsertFields">
+        personal_doc_id,
+        personal_doc_name,
+        personal_doc_type,
+        create_stf,
+        limits_authority,
+        parent_doc_id,
+        create_date,
+        update_date,
+        attach_dtl_id
+    </sql>
+
+    <sql id="personalDocQueryFields">
+        personal_doc_id as "personalDocID",
+        personal_doc_name as "personalDocName",
+        personal_doc_type as "personalDocType",
+        create_stf as "createStf",
+        limits_authority as "limitsAuthority",
+        parent_doc_id as "parentDocID",
+        create_date as "createDate",
+        update_date as "updateDate",
+        attach_dtl_id as "attachDtlID"
+    </sql>
+
+    <sql id="personalDocQueryParam">
+        <where>
+            <if test="personalDocID != null and personalDocID != ''">
+                and t.personal_doc_id = #{personalDocID}
+            </if>
+            <if test="personalDocName != null and personalDocName != ''">
+                and t.personal_doc_name = #{personalDocName}
+            </if>
+            <if test="personalDocType != null and personalDocType != ''">
+                and t.personal_doc_type = #{personalDocType}
+            </if>
+            <if test="createStf != null and createStf != ''">
+                and t.create_stf = #{createStf}
+            </if>
+            <if test="limitsAuthority != null and limitsAuthority != ''">
+                and t.limits_authority = #{limitsAuthority}
+            </if>
+            <if test="parentDocID != null and parentDocID != ''">
+                and t.parent_doc_id = #{parentDocID}
+            </if>
+            <if test="createDate != null and createDate != ''">
+                and t.create_date = #{createDate}
+            </if>
+            <if test="updateDate != null and updateDate != ''">
+                and t.update_date = #{updateDate}
+            </if>
+            <if test="attachDtlID != null and attachDtlID != ''">
+                and t.attach_dtl_id = #{attachDtlID}
+            </if>
+        </where>
+    </sql>
+
+    <sql id="pageParam">
+        <if test="pageSize != null and pageSize != '' and pageNo != null and pageNo != ''">
+            limit #{indexStart}, #{pageSize}
+        </if>
+    </sql>
+
+    <select id="selectPersonalDocList" resultType="com.stone.elm.springboot.demo.business.personalcenter.personaldocument.model.vo.PersonalDocVO">
+        select
+        <include refid="personalDocQueryFields"/>
+        from personal_doc t
+        <include refid="personalDocQueryParam"/>
+        <include refid="pageParam"/>
+    </select>
+
+    <select id="countPersonalDocAll" resultType="java.lang.Integer">
+        select count(1)
+        from personal_doc t
+        <include refid="personalDocQueryParam"/>
+    </select>
+
+    <insert id="createPersonalDocList">
+        insert into personal_doc(<include refid="personalDocInsertFields"/>) values
+        <foreach collection="createPersonalDocList" separator="," item="item" index="index">
+            (
+            #{item.personalDocID},
+            #{item.personalDocName},
+            #{item.personalDocType},
+            #{item.createStf},
+            #{item.limitsAuthority},
+            #{item.parentDocID},
+            #{item.createDate},
+            #{item.updateDate},
+            #{item.attachDtlID}
+            )
+        </foreach>
+    </insert>
+
+    <update id="updatePersonalDocList">
+        <foreach collection="updatePersonalDocList" item="item" index="index" open="" close="" separator=";">
+            update personal_doc
+            <set>
+                <if test="item.personalDocName != null and item.personalDocName != ''">
+                    personal_doc_name = #{item.personalDocName},
+                </if>
+                <if test="item.personalDocType != null and item.personalDocType != ''">
+                    personal_doc_type = #{item.personalDocType},
+                </if>
+                <if test="item.createStf != null and item.createStf != ''">
+                    create_stf = #{item.createStf},
+                </if>
+                <if test="item.limitsAuthority != null and item.limitsAuthority != ''">
+                    limits_authority = #{item.limitsAuthority},
+                </if>
+                <if test="item.parentDocID != null and item.parentDocID != ''">
+                    parent_doc_id = #{item.parentDocID},
+                </if>
+                <if test="item.createDate != null and item.createDate != ''">
+                    create_date = #{item.createDate},
+                </if>
+                <if test="item.updateDate != null and item.updateDate != ''">
+                    update_date = #{item.updateDate},
+                </if>
+                <if test="item.attachDtlID != null and item.attachDtlID != ''">
+                    attach_dtl_id = #{item.attachDtlID},
+                </if>
+                personal_doc_id = #{item.personalDocID}
+            </set>
+            <where>
+                personal_doc_id = #{item.personalDocID}
+            </where>
+        </foreach>
+    </update>
+
+    <delete id="deletePersonalDocList">
+        delete from personal_doc where personal_doc_id in (
+        <foreach collection="deletePersonalDocList" item="item" index="index" open="" close="" separator=",">
+            #{item.personalDocID}
+        </foreach>
+        )
+    </delete>
+
+</mapper>
