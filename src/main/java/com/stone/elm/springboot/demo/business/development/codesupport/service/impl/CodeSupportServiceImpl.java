@@ -67,10 +67,10 @@ public class CodeSupportServiceImpl implements ICodeSupportService {
 
         switch (columnQueryAO.getOperationType()) {
             case "01":
-                resultSB = produceAVOClass(tableQueryVO, columnList, "AO");
+                resultSB = produceAVOClass(tableQueryVO, columnList, "AO", tablePK);
                 break;
             case "02":
-                resultSB = produceAVOClass(tableQueryVO, columnList, "VO");
+                resultSB = produceAVOClass(tableQueryVO, columnList, "VO", tablePK);
                 break;
             case "03":
                 resultSB = produceController(tableQueryVO, columnList);
@@ -97,13 +97,25 @@ public class CodeSupportServiceImpl implements ICodeSupportService {
         return result;
     }
 
-    private StringBuilder produceAVOClass(TableQueryVO tableQueryVO, List<ColumnQueryVO> columnList, String model) {
+    private StringBuilder produceAVOClass(TableQueryVO tableQueryVO, List<ColumnQueryVO> columnList, String model, String tablePK) {
         StringBuilder resultSB = new StringBuilder();
+
+        String var1 = StringUtils.equals(model, "AO")? " extends QueryEntity": "";
+
         resultSB.append("@ApiModel(value = " + QUOTE + tableCapitalStart(tableQueryVO.getTableName()) + model + QUOTE + ", description = " + QUOTE + tableQueryVO.getTableComment() + "查询" + model + QUOTE + ")" + LINE);
-        resultSB.append("public class " + tableCapitalStart(tableQueryVO.getTableName()) + model + " {" + LINE);
+        resultSB.append("public class " + tableCapitalStart(tableQueryVO.getTableName()) + model + var1 + " {" + LINE);
+        if (StringUtils.equals(model, "AO")) {
+            resultSB.append(TAB + "public interface selectGroup{}" + LINE);
+            resultSB.append(TAB + "public interface createGroup{}" + LINE);
+            resultSB.append(TAB + "public interface updateGroup{}" + LINE);
+            resultSB.append(TAB + "public interface deleteGroup{}" + LINE);
+        }
         resultSB.append(LINE);
 
         for (ColumnQueryVO columnQueryVO : columnList) {
+            if (StringUtils.equals(tablePK, columnQueryVO.getColumnName())) {
+                resultSB.append(TAB + "@NotNull(message = " + QUOTE + columnQueryVO.getColumnComment() + "不能为空" + QUOTE + ", groups = {updateGroup.class, deleteGroup.class})" + LINE);
+            }
             resultSB.append(TAB + "@ApiModelProperty(value = " + QUOTE + columnQueryVO.getColumnComment() + QUOTE + ")" + LINE);
             resultSB.append(TAB + "private String " + getHump(columnQueryVO.getColumnName()) + ";" + LINE);
             resultSB.append(LINE);

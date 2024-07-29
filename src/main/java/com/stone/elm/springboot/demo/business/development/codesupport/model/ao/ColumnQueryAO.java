@@ -1,11 +1,9 @@
 package com.stone.elm.springboot.demo.business.development.codesupport.model.ao;
 
-import com.stone.elm.springboot.demo.business.system.model.ao.CodeClsAO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @ApiModel(value = "ColumnQueryAO", description = "数据列查询AO")
 public class ColumnQueryAO {

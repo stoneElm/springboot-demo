@@ -9,10 +9,10 @@ import java.util.List;
 
 @ApiModel(value = "CodeClsAO", description = "标准代码分类实体AO")
 public class CodeClsAO extends QueryEntity {
-    public interface queryGroup{};
-    public interface createGroup{};
-    public interface updateGroup{};
-    public interface deleteGroup{};
+    public interface queryGroup{}
+    public interface createGroup{}
+    public interface updateGroup{}
+    public interface deleteGroup{}
 
     @NotNull(message = "标准代码分类标识不能为空", groups = {updateGroup.class, deleteGroup.class})
     private Long codeClsID;
