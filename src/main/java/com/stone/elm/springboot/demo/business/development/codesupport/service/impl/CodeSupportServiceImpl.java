@@ -316,7 +316,7 @@ public class CodeSupportServiceImpl implements ICodeSupportService {
         resultSB.append(TAB + "</sql>" + LINE + LINE);
         resultSB.append(TAB + "<sql id=\"" + var2 + "QueryFields\">" + LINE);
         for (int i = 0; i < columnList.size(); i++) {
-            resultSB.append(TAB + TAB + columnList.get(i).getColumnName() + " as \"" + getHump(columnList.get(i).getColumnName()) + "\"");
+            resultSB.append(TAB + TAB + "t." + columnList.get(i).getColumnName() + " as \"" + getHump(columnList.get(i).getColumnName()) + "\"");
             if (i != columnList.size() - 1) {
                 resultSB.append(",");
             }

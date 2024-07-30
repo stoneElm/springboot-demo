@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @ApiModel(value = "PersonalDocAO", description = "个人文档表查询AO")
 public class PersonalDocAO extends QueryEntity {
@@ -16,6 +17,9 @@ public class PersonalDocAO extends QueryEntity {
     @NotNull(message = "个人文件唯一标识不能为空", groups = {updateGroup.class, deleteGroup.class})
     @ApiModelProperty(value = "个人文件唯一标识")
     private Long personalDocID;
+
+    @ApiModelProperty(value = "个人文件唯一标识列表")
+    private List<Long> personalDocIDList;
 
     @ApiModelProperty(value = "文档名称")
     private String personalDocName;
@@ -47,6 +51,14 @@ public class PersonalDocAO extends QueryEntity {
 
     public void setPersonalDocID(Long personalDocID) {
         this.personalDocID = personalDocID;
+    }
+
+    public List<Long> getPersonalDocIDList() {
+        return personalDocIDList;
+    }
+
+    public void setPersonalDocIDList(List<Long> personalDocIDList) {
+        this.personalDocIDList = personalDocIDList;
     }
 
     public String getPersonalDocName() {

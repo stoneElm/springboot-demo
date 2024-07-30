@@ -33,6 +33,9 @@ public class PersonalDocVO {
     @ApiModelProperty(value = "关联附件详情唯一标识")
     private Long attachDtlID;
 
+    @ApiModelProperty(value = "附件名称")
+    private String attachDtlName;
+
     public Long getPersonalDocID() {
         return personalDocID;
     }
@@ -103,5 +106,13 @@ public class PersonalDocVO {
 
     public void setAttachDtlID(Long attachDtlID) {
         this.attachDtlID = attachDtlID;
+    }
+
+    public String getAttachDtlName() {
+        return attachDtlName;
+    }
+
+    public void setAttachDtlName(String attachDtlName) {
+        this.attachDtlName = attachDtlName;
     }
 }

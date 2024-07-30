@@ -43,6 +43,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class AttachServiceFileImpl implements IAttachFileService {
@@ -218,7 +219,44 @@ public class AttachServiceFileImpl implements IAttachFileService {
         Integer integer = iAttachMapper.deleteAttachDtlList(deleteAttachDtlList);
         LOGGER.info("成功删除数据:{}条", integer);
 
-        Path path = Paths.get(fileFolder + attachDtl.getAttachDtlPath());
+        deleteFileByPath(attachAO.getAttachDtlPath());
+
+        AttachDtlVO attachDtlVO = new AttachDtlVO();
+        BeanCopyUtil.copy(attachAO, attachDtlVO);
+        ArrayList<AttachDtlVO> resultData = new ArrayList<>();
+        resultData.add(attachDtlVO);
+        return ResultUtils.wrapResult(resultData);
+    }
+
+    @Override
+    public ResponseResult<List<AttachDtlVO>> deleteAttachDtlList(List<AttachDtlAO> deleteAttachDtlList, Boolean deleteFileFlag) {
+        LOGGER.info("删除附件详情信息入参:{}", JsonUtil.convertObjectToJson(deleteAttachDtlList));
+
+        List<String> deleteFilePathList = new ArrayList<>();
+        if (deleteFileFlag) {
+            deleteFilePathList = deleteAttachDtlList.stream().map(AttachDtlAO::getAttachDtlPath).distinct().collect(Collectors.toList());
+        }
+
+        Integer row = iAttachMapper.deleteAttachDtlList(deleteAttachDtlList);
+        LOGGER.info("成功执行{}条数据", row);
+
+        if (CollectionUtils.isEmpty(deleteFilePathList)) {
+            for (String deleteFilePath : deleteFilePathList) {
+                deleteFileByPath(deleteFilePath);
+            }
+        }
+
+        List<AttachDtlVO> resultData = new ArrayList<>();
+        BeanCopyUtil.copyList(deleteAttachDtlList, resultData, AttachDtlVO.class);
+
+        ResponseResult<List<AttachDtlVO>> result = ResultUtils.wrapResult(resultData);
+
+        LOGGER.info("删除附件详情表出参:{}", JsonUtil.convertObjectToJson(result));
+        return result;
+    }
+
+    private void deleteFileByPath(String deleteFilePath) {
+        Path path = Paths.get(fileFolder + deleteFilePath);
 
         Resource resource;
         try {
@@ -231,19 +269,13 @@ public class AttachServiceFileImpl implements IAttachFileService {
         if (resource.exists() || resource.isReadable()) {
             try {
                 File file = resource.getFile();
-                LOGGER.info("开始删除文件:{}", fileFolder + attachDtl.getAttachDtlPath());
+                LOGGER.info("开始删除文件:{}", fileFolder + deleteFilePath);
                 file.delete();
             } catch (IOException e) {
                 e.printStackTrace();
                 throw new BusinessException("从Resource获取文件失败！", ResponseConstant.FAIL);
             }
         }
-
-        AttachDtlVO attachDtlVO = new AttachDtlVO();
-        BeanCopyUtil.copy(attachAO, attachDtlVO);
-        ArrayList<AttachDtlVO> resultData = new ArrayList<>();
-        resultData.add(attachDtlVO);
-        return ResultUtils.wrapResult(resultData);
     }
 
     private Resource getResourceByAttachDtl(AttachDtlVO attachDtl) {

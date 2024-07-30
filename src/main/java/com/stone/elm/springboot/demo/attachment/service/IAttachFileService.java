@@ -28,4 +28,6 @@ public interface IAttachFileService {
     ResponseResult<List<AttachDtlVO>> selectAttachDtlList(AttachDtlAO attachAO);
 
     ResponseResult<List<AttachDtlVO>> deleteAttachDtlByID(AttachDtlAO attachAO);
+
+    ResponseResult<List<AttachDtlVO>> deleteAttachDtlList(List<AttachDtlAO> deleteAttachDtlList, Boolean deleteFileFlag);
 }

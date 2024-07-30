@@ -15,21 +15,29 @@
     </sql>
 
     <sql id="personalDocQueryFields">
-        personal_doc_id as "personalDocID",
-        personal_doc_name as "personalDocName",
-        personal_doc_type as "personalDocType",
-        create_stf as "createStf",
-        limits_authority as "limitsAuthority",
-        parent_doc_id as "parentDocID",
-        create_date as "createDate",
-        update_date as "updateDate",
-        attach_dtl_id as "attachDtlID"
+        t.personal_doc_id as "personalDocID",
+        COALESCE(t.personal_doc_name, a.attach_dtl_name) as "personalDocName",
+        t.personal_doc_type as "personalDocType",
+        t.create_stf as "createStf",
+        t.limits_authority as "limitsAuthority",
+        t.parent_doc_id as "parentDocID",
+        t.create_date as "createDate",
+        t.update_date as "updateDate",
+        t.attach_dtl_id as "attachDtlID",
+        a.attach_dtl_name as "a.attachDtlName"
     </sql>
 
     <sql id="personalDocQueryParam">
         <where>
             <if test="personalDocID != null and personalDocID != ''">
                 and t.personal_doc_id = #{personalDocID}
+            </if>
+            <if test="personalDocIDList != null and personalDocIDList.size() > 0">
+                and t.personal_doc_id in (
+                <foreach collection="personalDocIDList" item="item" separator=",">
+                    #{item}
+                </foreach>
+                )
             </if>
             <if test="personalDocName != null and personalDocName != ''">
                 and t.personal_doc_name = #{personalDocName}
@@ -67,7 +75,7 @@
     <select id="selectPersonalDocList" resultType="com.stone.elm.springboot.demo.business.personalcenter.personaldocument.model.vo.PersonalDocVO">
         select
         <include refid="personalDocQueryFields"/>
-        from personal_doc t
+        from personal_doc t left join attach_dtl a on t.attach_dtl_id = a.attach_dtl_id
         <include refid="personalDocQueryParam"/>
         <include refid="pageParam"/>
     </select>
