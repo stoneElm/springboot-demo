@@ -58,6 +58,12 @@ public class AttachFileController {
         return iAttachFileService.selectAttachDtlList(attachAO);
     }
 
+    @PostMapping("/updateAttachDtlList")
+    @ApiOperation(value = "文件下载 维护人:Lan StoneElm")
+    public ResponseResult<List<AttachDtlVO>> updateAttachDtlList (@RequestBody List<AttachDtlAO> updateAttachDtlList) {
+        return iAttachFileService.updateAttachDtlList(updateAttachDtlList);
+    }
+
     @PostMapping("/deleteAttachDtlByID")
     @ApiOperation(value = "通过文件详情删除文件详情信息 维护人:Lan StoneElm")
     public ResponseResult<List<AttachDtlVO>> deleteAttachDtlByID (@RequestBody AttachDtlAO attachAO) {

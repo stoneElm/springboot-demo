@@ -63,6 +63,7 @@
             <if test="attachDtlID != null and attachDtlID != ''">
                 and t.attach_dtl_id = #{attachDtlID}
             </if>
+            and parent_doc_id is not null
         </where>
     </sql>
 

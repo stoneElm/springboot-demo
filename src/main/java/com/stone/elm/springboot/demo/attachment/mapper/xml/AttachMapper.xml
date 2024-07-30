@@ -117,6 +117,54 @@
         <include refid="pageParam"/>
     </select>
 
+    <update id="updateAttachDtlList">
+        <foreach collection="updateAttachDtlList" item="item" index="index" open="" close="" separator=";">
+            update attach_dtl
+            <set>
+                <if test="item.attachID != null and item.attachID != ''">
+                    attach_id = #{item.attachID},
+                </if>
+                <if test="item.attachDtlName != null and item.attachDtlName != ''">
+                    attach_dtl_name = #{item.attachDtlName},
+                </if>
+                <if test="item.attachDtlDesc != null and item.attachDtlDesc != ''">
+                    attach_dtl_desc = #{item.attachDtlDesc},
+                </if>
+                <if test="item.attachDtlPath != null and item.attachDtlPath != ''">
+                    attach_dtl_path = #{item.attachDtlPath},
+                </if>
+                <if test="item.attachDtlFmt != null and item.attachDtlFmt != ''">
+                    attach_dtl_fmt = #{item.attachDtlFmt},
+                </if>
+                <if test="item.attachDtlStat != null and item.attachDtlStat != ''">
+                    attach_dtl_stat = #{item.attachDtlStat},
+                </if>
+                <if test="item.attachDtlSize != null and item.attachDtlSize != ''">
+                    attach_dtl_size = #{item.attachDtlSize},
+                </if>
+                <if test="item.attachDtlCateg != null and item.attachDtlCateg != ''">
+                    attach_dtl_categ = #{item.attachDtlCateg},
+                </if>
+                <if test="item.attachDtlType != null and item.attachDtlType != ''">
+                    attach_dtl_type = #{item.attachDtlType},
+                </if>
+                <if test="item.attachDtlContentType != null and item.attachDtlContentType != ''">
+                    attach_dtl_content_type = #{item.attachDtlContentType},
+                </if>
+                <if test="item.uploadStf != null and item.uploadStf != ''">
+                    upload_stf = #{item.uploadStf},
+                </if>
+                <if test="item.uploadDate != null and item.uploadDate != ''">
+                    upload_date = #{item.uploadDate},
+                </if>
+                attach_dtl_id = #{item.attachDtlID}
+            </set>
+            <where>
+                attach_dtl_id = #{item.attachDtlID}
+            </where>
+        </foreach>
+    </update>
+
     <delete id="deleteAttachDtlList">
         delete from attach_dtl where attach_dtl_id in (
         <foreach collection="deleteAttachDtlList" item="item" index="index" open="" close="" separator=",">

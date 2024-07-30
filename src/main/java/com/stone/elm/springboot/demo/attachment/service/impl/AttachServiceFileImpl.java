@@ -255,6 +255,26 @@ public class AttachServiceFileImpl implements IAttachFileService {
         return result;
     }
 
+    @Override
+    public ResponseResult<List<AttachDtlVO>> updateAttachDtlList(List<AttachDtlAO> updateAttachDtlList) {
+        LOGGER.info("更新附件详情表入参:{}", JsonUtil.convertObjectToJson(updateAttachDtlList));
+
+        if (CollectionUtils.isEmpty(updateAttachDtlList)) {
+            return ResultUtils.wrapResult();
+        }
+
+        Integer row = iAttachMapper.updateAttachDtlList(updateAttachDtlList);
+        LOGGER.info("成功执行{}条数据", row);
+
+        List<AttachDtlVO> resultData = new ArrayList<>();
+        BeanCopyUtil.copyList(updateAttachDtlList, resultData, AttachDtlVO.class);
+
+        ResponseResult<List<AttachDtlVO>> result = ResultUtils.wrapResult(resultData);
+
+        LOGGER.info("更新附件详情表出参:{}", JsonUtil.convertObjectToJson(result));
+        return result;
+    }
+
     private void deleteFileByPath(String deleteFilePath) {
         Path path = Paths.get(fileFolder + deleteFilePath);
 

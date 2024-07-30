@@ -23,6 +23,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -111,8 +113,24 @@ public class PersonalDocServiceImpl implements IPersonalDocService {
             return ResultUtils.wrapResult();
         }
 
+        Map<Long, String> idNameMap = updatePersonalDocList.stream().collect(Collectors.toMap(PersonalDocAO::getPersonalDocID, PersonalDocAO::getPersonalDocName));
+
+        PersonalDocAO personalDocAO = new PersonalDocAO();
+        personalDocAO.setPersonalDocIDList(updatePersonalDocList.stream().map(PersonalDocAO::getPersonalDocID).distinct().collect(Collectors.toList()));
+        List<PersonalDocVO> fullUpdateList = selectPersonalDocList(personalDocAO).getData().stream().filter(ao -> Objects.nonNull(ao.getAttachDtlID())).collect(Collectors.toList());
+
         Integer row = personalDocMapper.updatePersonalDocList(updatePersonalDocList);
         LOGGER.info("成功执行{}条数据", row);
+
+        ArrayList<AttachDtlAO> updateAttachDtlList = new ArrayList<>();
+        for (PersonalDocVO personalDoc : fullUpdateList) {
+            AttachDtlAO attachDtlAO = new AttachDtlAO();
+            attachDtlAO.setAttachDtlID(personalDoc.getAttachDtlID());
+            attachDtlAO.setAttachDtlName(idNameMap.get(personalDoc.getPersonalDocID()));
+            updateAttachDtlList.add(attachDtlAO);
+        }
+
+        iAttachFileService.updateAttachDtlList(updateAttachDtlList);
 
         List<PersonalDocVO> resultData = new ArrayList<>();
         BeanCopyUtil.copyList(updatePersonalDocList, resultData, PersonalDocVO.class);
@@ -178,7 +196,7 @@ public class PersonalDocServiceImpl implements IPersonalDocService {
 
             if (StringUtils.equals(personalDocVO.getPersonalDocType(), DocTypeEnum.FOLDER.getTypeCode())) {
                 PersonalDocAO docAO = new PersonalDocAO();
-                docAO.setPersonalDocID(personalDocVO.getPersonalDocID());
+                docAO.setParentDocID(personalDocVO.getPersonalDocID());
                 List<PersonalDocVO> tempList = personalDocMapper.selectPersonalDocList(docAO);
 
                 getAllDeleteDocList(allDeleteDocList, tempList);

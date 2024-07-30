@@ -30,4 +30,6 @@ public interface IAttachFileService {
     ResponseResult<List<AttachDtlVO>> deleteAttachDtlByID(AttachDtlAO attachAO);
 
     ResponseResult<List<AttachDtlVO>> deleteAttachDtlList(List<AttachDtlAO> deleteAttachDtlList, Boolean deleteFileFlag);
+
+    ResponseResult<List<AttachDtlVO>> updateAttachDtlList(List<AttachDtlAO> updateAttachDtlList);
 }

@@ -17,6 +17,8 @@ public interface IAttachMapper {
 
     Integer createAttachDtlList(@Param("createAttachDtlList") List<AttachDtlRoot> createAttachDtlList);
 
+    Integer updateAttachDtlList(@Param("updateAttachDtlList") List<AttachDtlAO> updateAttachDtlList);
+
     Integer deleteAttachDtlList(@Param("deleteAttachDtlList") List<AttachDtlAO> deleteAttachDtlList);
 
     List<AttachDtlVO> selectAttachDtlList(AttachDtlAO attachDtlAO);
