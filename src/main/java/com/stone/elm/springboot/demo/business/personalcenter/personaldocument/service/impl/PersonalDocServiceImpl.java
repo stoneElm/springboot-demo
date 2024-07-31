@@ -167,7 +167,7 @@ public class PersonalDocServiceImpl implements IPersonalDocService {
 
 
         ArrayList<AttachDtlAO> deleteAttachDtlList = new ArrayList<>();
-        List<Long> attachDtlIDList = allDeleteDocList.stream().map(PersonalDocAO::getAttachDtlID).distinct().collect(Collectors.toList());
+        List<Long> attachDtlIDList = allDeleteDocList.stream().map(PersonalDocAO::getAttachDtlID).distinct().filter(id -> Objects.nonNull(id)).collect(Collectors.toList());
         for (Long attachDtlID : attachDtlIDList) {
             AttachDtlAO attachDtlAO = new AttachDtlAO();
             attachDtlAO.setAttachDtlID(attachDtlID);

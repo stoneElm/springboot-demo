@@ -232,15 +232,22 @@ public class AttachServiceFileImpl implements IAttachFileService {
     public ResponseResult<List<AttachDtlVO>> deleteAttachDtlList(List<AttachDtlAO> deleteAttachDtlList, Boolean deleteFileFlag) {
         LOGGER.info("删除附件详情信息入参:{}", JsonUtil.convertObjectToJson(deleteAttachDtlList));
 
+        if (CollectionUtils.isEmpty(deleteAttachDtlList)) {
+            return ResultUtils.wrapResult();
+        }
+
         List<String> deleteFilePathList = new ArrayList<>();
         if (deleteFileFlag) {
-            deleteFilePathList = deleteAttachDtlList.stream().map(AttachDtlAO::getAttachDtlPath).distinct().collect(Collectors.toList());
+            AttachDtlAO attachDtlAO = new AttachDtlAO();
+            attachDtlAO.setAttachDtlIDList(deleteAttachDtlList.stream().map(AttachDtlAO::getAttachDtlID).distinct().collect(Collectors.toList()));
+            List<AttachDtlVO> data = selectAttachDtlList(attachDtlAO).getData();
+            deleteFilePathList = data.stream().map(AttachDtlVO::getAttachDtlPath).distinct().collect(Collectors.toList());
         }
 
         Integer row = iAttachMapper.deleteAttachDtlList(deleteAttachDtlList);
         LOGGER.info("成功执行{}条数据", row);
 
-        if (CollectionUtils.isEmpty(deleteFilePathList)) {
+        if (CollectionUtils.isNotEmpty(deleteFilePathList)) {
             for (String deleteFilePath : deleteFilePathList) {
                 deleteFileByPath(deleteFilePath);
             }

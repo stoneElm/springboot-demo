@@ -24,7 +24,10 @@
         t.create_date as "createDate",
         t.update_date as "updateDate",
         t.attach_dtl_id as "attachDtlID",
-        a.attach_dtl_name as "a.attachDtlName"
+        a.attach_dtl_name as "attachDtlName",
+        a.attach_dtl_fmt as "attachDtlFmt",
+        a.attach_dtl_type as "attachDtlType",
+        a.attach_dtl_content_type as "attachDtlContentType"
     </sql>
 
     <sql id="personalDocQueryParam">
@@ -78,6 +81,7 @@
         <include refid="personalDocQueryFields"/>
         from personal_doc t left join attach_dtl a on t.attach_dtl_id = a.attach_dtl_id
         <include refid="personalDocQueryParam"/>
+        order by t.personal_doc_type
         <include refid="pageParam"/>
     </select>
 

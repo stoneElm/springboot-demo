@@ -36,6 +36,10 @@ public class PersonalDocVO {
     @ApiModelProperty(value = "附件名称")
     private String attachDtlName;
 
+    private String attachDtlFmt;
+    private String attachDtlType;
+    private String attachDtlContentType;
+
     public Long getPersonalDocID() {
         return personalDocID;
     }
@@ -114,5 +118,29 @@ public class PersonalDocVO {
 
     public void setAttachDtlName(String attachDtlName) {
         this.attachDtlName = attachDtlName;
+    }
+
+    public String getAttachDtlFmt() {
+        return attachDtlFmt;
+    }
+
+    public void setAttachDtlFmt(String attachDtlFmt) {
+        this.attachDtlFmt = attachDtlFmt;
+    }
+
+    public String getAttachDtlType() {
+        return attachDtlType;
+    }
+
+    public void setAttachDtlType(String attachDtlType) {
+        this.attachDtlType = attachDtlType;
+    }
+
+    public String getAttachDtlContentType() {
+        return attachDtlContentType;
+    }
+
+    public void setAttachDtlContentType(String attachDtlContentType) {
+        this.attachDtlContentType = attachDtlContentType;
     }
 }
