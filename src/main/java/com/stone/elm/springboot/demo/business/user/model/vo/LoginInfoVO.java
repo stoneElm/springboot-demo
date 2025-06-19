@@ -12,6 +12,9 @@ public class LoginInfoVO {
     @ApiModelProperty(value = "文件token值")
     private String fileToken;
 
+    @ApiModelProperty(value = "用户基础信息")
+    private UserInfoVO userInfo;
+
     public String getToken() {
         return token;
     }
@@ -28,11 +31,11 @@ public class LoginInfoVO {
         this.fileToken = fileToken;
     }
 
-    @Override
-    public String toString() {
-        return "LoginInfoVO{" +
-                "token='" + token + '\'' +
-                ", fileToken='" + fileToken + '\'' +
-                '}';
+    public UserInfoVO getUserInfo() {
+        return userInfo;
+    }
+
+    public void setUserInfo(UserInfoVO userInfo) {
+        this.userInfo = userInfo;
     }
 }

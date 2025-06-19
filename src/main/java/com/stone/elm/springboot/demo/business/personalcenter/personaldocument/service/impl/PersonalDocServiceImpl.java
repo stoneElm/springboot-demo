@@ -2,6 +2,9 @@ package com.stone.elm.springboot.demo.business.personalcenter.personaldocument.s
 
 import com.stone.elm.springboot.demo.attachment.model.ao.AttachDtlAO;
 import com.stone.elm.springboot.demo.attachment.service.IAttachFileService;
+import com.stone.elm.springboot.demo.basictech.common.constant.NumberConstant;
+import com.stone.elm.springboot.demo.basictech.common.exception.BusinessException;
+import com.stone.elm.springboot.demo.basictech.common.response.ResponseConstant;
 import com.stone.elm.springboot.demo.basictech.common.response.ResponseResult;
 import com.stone.elm.springboot.demo.basictech.common.response.ResultUtils;
 import com.stone.elm.springboot.demo.basictech.common.service.IPrimaryKeyService;
@@ -21,10 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -184,6 +184,38 @@ public class PersonalDocServiceImpl implements IPersonalDocService {
         return result;
     }
 
+    /**
+     * 查询当前文档路径ServiceImpl
+     * @param personalDocAO
+     * @return
+     */
+    @Override
+    public ResponseResult<List<PersonalDocVO>> selectPersonalDocPath(PersonalDocAO personalDocAO) {
+        LOGGER.info("查询当前文档路径入参:{}", JsonUtil.convertObjectToJson(personalDocAO));
+
+        if (Objects.isNull(personalDocAO.getParentDocID()) && Objects.isNull(personalDocAO.getPersonalDocID())) {
+            throw new BusinessException("文档标识或上级文档标识不能同时为空!", ResponseConstant.FAIL);
+        }
+
+        if (Objects.isNull(personalDocAO.getParentDocID())) {
+            List<PersonalDocVO> personalDocList = personalDocMapper.selectPersonalDocList(personalDocAO);
+            if (CollectionUtils.isNotEmpty(personalDocList)) {
+                PersonalDocVO personalDocVO = personalDocList.stream().findFirst().get();
+                personalDocAO.setParentDocID(personalDocVO.getParentDocID());
+            }
+        }
+
+        ArrayList<PersonalDocVO> resultData = new ArrayList<>();
+        initPersonalDocPath(resultData, personalDocAO.getParentDocID());
+
+        Collections.reverse(resultData);
+
+        ResponseResult<List<PersonalDocVO>> result = ResultUtils.wrapResult(resultData);
+
+        LOGGER.info("查询当前文档路径出参:{}", JsonUtil.convertObjectToJson(result));
+        return result;
+    }
+
     private void getAllDeleteDocList(List<PersonalDocAO> allDeleteDocList, List<PersonalDocVO> deletePersonalDocList) {
         if (CollectionUtils.isEmpty(deletePersonalDocList)) {
             return;
@@ -201,6 +233,22 @@ public class PersonalDocServiceImpl implements IPersonalDocService {
 
                 getAllDeleteDocList(allDeleteDocList, tempList);
             }
+        }
+    }
+
+    private void initPersonalDocPath(ArrayList<PersonalDocVO> dataList, Long parentDocID) {
+        if (Objects.isNull(parentDocID) || NumberConstant.LONG_ONE.equals(parentDocID)) {
+            return;
+        }
+
+        PersonalDocAO personalDocAO = new PersonalDocAO();
+        personalDocAO.setPersonalDocID(parentDocID);
+        List<PersonalDocVO> personalDocList = personalDocMapper.selectPersonalDocList(personalDocAO);
+
+        if (CollectionUtils.isNotEmpty(personalDocList)) {
+            PersonalDocVO personalDocVO = personalDocList.stream().findFirst().get();
+            dataList.add(personalDocVO);
+            initPersonalDocPath(dataList, personalDocVO.getParentDocID());
         }
     }
 

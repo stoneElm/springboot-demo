@@ -36,4 +36,10 @@ public interface IPersonalDocService {
      */
     ResponseResult<List<PersonalDocVO>> deletePersonalDocList(List<PersonalDocAO> personalDocList);
 
+    /**
+     * 查询当前文档路径Service
+     * @param personalDocAO
+     * @return
+     */
+    ResponseResult<List<PersonalDocVO>> selectPersonalDocPath(PersonalDocAO personalDocAO);
 }

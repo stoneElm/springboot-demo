@@ -95,6 +95,8 @@ public class UserLoginServiceImpl implements IUserLoginService {
         UserInfoVO redisUserInfo = new UserInfoVO();
         redisUserInfo.setUserID(userInfo.getUserID());
         redisUserInfo.setUserName(userInfo.getUserName());
+        userInfo.setPassword(null);
+        resultData.setUserInfo(userInfo);
 
         //将用户信息存入redis
         redisCache.setCacheObject(RedisKeyConstant.USER_TOKEN_LONG + SymbolConstant.BAR + userInfo.getUserID(), redisUserInfo);

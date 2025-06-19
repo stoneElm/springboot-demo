@@ -52,4 +52,11 @@ public class PersonalDocController {
         return iPersonalDocService.deletePersonalDocList(personalDocList);
     }
 
+    @PostMapping("/selectPersonalDocPath")
+    @ApiOperation(value = "查询当前文档路径 维护人:Lan StoneElm")
+    public ResponseResult<List<PersonalDocVO>> selectPersonalDocPath (
+            @ApiParam(name = "PersonalDocAO", value = "个人文档表实体AO") @RequestBody PersonalDocAO personalDocAO) {
+        return iPersonalDocService.selectPersonalDocPath(personalDocAO);
+    }
+
 }
