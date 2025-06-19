@@ -7,6 +7,7 @@ import com.stone.elm.springboot.demo.attachment.model.root.AttachDtlRoot;
 import com.stone.elm.springboot.demo.attachment.model.vo.AttachDtlVO;
 import com.stone.elm.springboot.demo.attachment.model.vo.AttachVO;
 import com.stone.elm.springboot.demo.attachment.service.IAttachFileService;
+import com.stone.elm.springboot.demo.attachment.utils.OSUtil;
 import com.stone.elm.springboot.demo.basictech.common.constant.NumberConstant;
 import com.stone.elm.springboot.demo.basictech.common.constant.SymbolConstant;
 import com.stone.elm.springboot.demo.basictech.common.exception.BusinessException;
@@ -31,6 +32,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -50,8 +52,13 @@ public class AttachServiceFileImpl implements IAttachFileService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AttachServiceFileImpl.class);
 
-    @Value("${local.storage.folder}")
-    private String fileFolder;
+    private static String fileFolder;
+
+    @Value("${local.storage.folder.linux}")
+    private String fileFolderLinux;
+
+    @Value("${local.storage.folder.win}")
+    private String fileFolderWin;
 
     @Value("${file-server.address}")
     private String fileServerAddress;
@@ -61,6 +68,22 @@ public class AttachServiceFileImpl implements IAttachFileService {
 
     @Autowired
     private IAttachMapper iAttachMapper;
+
+    @PostConstruct
+    public void init() {
+        String os = OSUtil.getInstance().getOS();
+        LOGGER.info("获取当前操作系统信息:{}", os);
+
+        if (StringUtils.equals(os, "Linux")) {
+            fileFolder = fileFolderLinux;
+        }
+
+        if (StringUtils.equals(os, "Windows")) {
+            fileFolder = fileFolderWin;
+        }
+
+        LOGGER.info("获取当前文件存储路径:{}", fileFolder);
+    }
 
     /**
      * 文件上传实现类
