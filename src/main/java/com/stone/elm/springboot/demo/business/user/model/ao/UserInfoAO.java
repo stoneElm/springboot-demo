@@ -5,14 +5,24 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @ApiModel(value = "UserInfoAO", description = "用户信息实体AO")
 public class UserInfoAO extends QueryEntity {
     public interface registerGroup{};
 
-    @ApiModelProperty(value = "用户唯一标识")
+    public interface selectGroup{}
+    public interface createGroup{}
+    public interface updateGroup{}
+    public interface deleteGroup{}
+
+    @NotNull(message = "用户信息唯一标识不能为空", groups = {updateGroup.class, deleteGroup.class})
+    @ApiModelProperty(value = "用户信息唯一标识")
     private Long userID;
+
+    @ApiModelProperty(value = "在线状态")
+    private String onlineStat;
 
     private List<Long> userIDList;
 
@@ -80,15 +90,11 @@ public class UserInfoAO extends QueryEntity {
         this.userIDList = userIDList;
     }
 
-    @Override
-    public String toString() {
-        return "UserInfoAO{" +
-                "userID=" + userID +
-                ", userIDList=" + userIDList +
-                ", userName='" + userName + '\'' +
-                ", userPhone='" + userPhone + '\'' +
-                ", nickName='" + nickName + '\'' +
-                ", password='" + password + '\'' +
-                '}';
+    public String getOnlineStat() {
+        return onlineStat;
+    }
+
+    public void setOnlineStat(String onlineStat) {
+        this.onlineStat = onlineStat;
     }
 }

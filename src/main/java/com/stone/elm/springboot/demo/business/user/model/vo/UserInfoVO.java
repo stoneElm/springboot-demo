@@ -20,6 +20,9 @@ public class UserInfoVO {
     @ApiModelProperty(value = "用户密码")
     private String password;
 
+    @ApiModelProperty(value = "用户密码")
+    private String onlineStat;
+
     public Long getUserID() {
         return userID;
     }
@@ -60,14 +63,11 @@ public class UserInfoVO {
         this.password = password;
     }
 
-    @Override
-    public String toString() {
-        return "UserInfoVO{" +
-                "userID=" + userID +
-                ", userName='" + userName + '\'' +
-                ", userPhone='" + userPhone + '\'' +
-                ", nickName='" + nickName + '\'' +
-                ", password='" + password + '\'' +
-                '}';
+    public String getOnlineStat() {
+        return onlineStat;
+    }
+
+    public void setOnlineStat(String onlineStat) {
+        this.onlineStat = onlineStat;
     }
 }

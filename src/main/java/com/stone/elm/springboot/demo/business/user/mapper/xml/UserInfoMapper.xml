@@ -8,7 +8,8 @@
         user_name,
         nick_name,
         password,
-        user_phone
+        user_phone,
+        online_stat
     </sql>
 
     <!-- 用户信息查询字段SQL片段 -->
@@ -17,7 +18,8 @@
         user_name as "userName",
         nick_name as "nickName",
         password as "password",
-        user_phone as "userPhone"
+        user_phone as "userPhone",
+        online_stat as "onlineStat"
     </sql>
 
     <!-- 查询分页信息SQL片段 -->
@@ -41,6 +43,9 @@
             </if>
             <if test="nickName != null and nickName != ''">
                 and t.nick_name like CONCAT('%', #{nickName}, '%')
+            </if>
+            <if test="onlineStat != null and onlineStat != ''">
+                and t.online_stat = #{onlineStat}
             </if>
             <if test="userIDList != null and userIDList.size() > 0">
                 and t.user_id in (
@@ -68,7 +73,35 @@
             #{userName},
             #{nickName},
             #{password},
-            #{userPhone}
+            #{userPhone},
+            #{onlineStat}
         )
     </insert>
+
+    <update id="updateUserInfoList">
+        <foreach collection="updateUserInfoList" item="item" index="index" open="" close="" separator=";">
+            update user_info
+            <set>
+                <if test="item.userName != null and item.userName != ''">
+                    user_name = #{item.userName},
+                </if>
+                <if test="item.nickName != null and item.nickName != ''">
+                    nick_name = #{item.nickName},
+                </if>
+                <if test="item.password != null and item.password != ''">
+                    password = #{item.password},
+                </if>
+                <if test="item.userPhone != null and item.userPhone != ''">
+                    user_phone = #{item.userPhone},
+                </if>
+                <if test="item.onlineStat != null and item.onlineStat != ''">
+                    online_stat = #{item.onlineStat},
+                </if>
+                user_id = #{item.userID}
+            </set>
+            <where>
+                user_id = #{item.userID}
+            </where>
+        </foreach>
+    </update>
 </mapper>

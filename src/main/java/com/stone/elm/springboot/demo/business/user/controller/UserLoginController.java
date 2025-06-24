@@ -1,6 +1,7 @@
 package com.stone.elm.springboot.demo.business.user.controller;
 
 import com.stone.elm.springboot.demo.basictech.common.response.ResponseResult;
+import com.stone.elm.springboot.demo.basictech.common.response.ResultUtils;
 import com.stone.elm.springboot.demo.business.user.model.ao.LoginInfoAO;
 import com.stone.elm.springboot.demo.business.user.model.ao.UserInfoAO;
 import com.stone.elm.springboot.demo.business.user.model.vo.LoginInfoVO;
@@ -44,5 +45,11 @@ public class UserLoginController {
     public ResponseResult<Object> logout (
             @ApiParam(name = "UserInfoVO", value = "用户注册信息实体AO") @RequestBody UserInfoAO userInfoAO) {
         return iUserLoginService.logout(userInfoAO);
+    }
+
+    @PostMapping("/pseudoAuthentication")
+    @ApiOperation(value = "登出操作 维护人:Lan StoneElm")
+    public ResponseResult<Object> pseudoAuthentication () {
+        return ResultUtils.wrapResult(true);
     }
 }
