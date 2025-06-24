@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.stone.elm.springboot.demo.business.chat.mapper.ChatConversationMapper" >
+
+    <sql id="chatConversationInsertFields">
+        chat_conversation_id,
+        chat_conversation_no,
+        chat_conversation_name,
+        chat_conversation_type,
+        chat_conversation_actor,
+        join_time
+    </sql>
+
+    <sql id="chatConversationQueryFields">
+        t.chat_conversation_id as "chatConversationID",
+        t.chat_conversation_no as "chatConversationNo",
+        t.chat_conversation_name as "chatConversationName",
+        t.chat_conversation_type as "chatConversationType",
+        t.chat_conversation_actor as "chatConversationActor",
+        t.join_time as "joinTime"
+    </sql>
+
+    <sql id="chatConversationQueryParam">
+        <where>
+            <if test="chatConversationID != null and chatConversationID != ''">
+                and t.chat_conversation_id = #{chatConversationID}
+            </if>
+            <if test="chatConversationNo != null and chatConversationNo != ''">
+                and t.chat_conversation_no = #{chatConversationNo}
+            </if>
+            <if test="chatConversationName != null and chatConversationName != ''">
+                and t.chat_conversation_name = #{chatConversationName}
+            </if>
+            <if test="chatConversationType != null and chatConversationType != ''">
+                and t.chat_conversation_type = #{chatConversationType}
+            </if>
+            <if test="chatConversationActor != null and chatConversationActor != ''">
+                and t.chat_conversation_actor = #{chatConversationActor}
+            </if>
+            <if test="joinTime != null and joinTime != ''">
+                and t.join_time = #{joinTime}
+            </if>
+        </where>
+    </sql>
+
+    <sql id="pageParam">
+        <if test="pageSize != null and pageSize != '' and pageNo != null and pageNo != ''">
+            limit #{indexStart}, #{pageSize}
+        </if>
+    </sql>
+
+    <select id="selectChatConversationList" resultType="com.stone.elm.springboot.demo.business.chat.model.vo.ChatConversationVO">
+        select
+        <include refid="chatConversationQueryFields"/>
+        from chat_conversation t
+        <include refid="chatConversationQueryParam"/>
+        <include refid="pageParam"/>
+    </select>
+
+    <select id="countChatConversationAll" resultType="java.lang.Integer">
+        select count(1)
+        from chat_conversation t
+        <include refid="chatConversationQueryParam"/>
+    </select>
+
+    <insert id="createChatConversationList">
+        insert into chat_conversation(<include refid="chatConversationInsertFields"/>) values
+        <foreach collection="createChatConversationList" separator="," item="item" index="index">
+            (
+            #{item.chatConversationID},
+            #{item.chatConversationNo},
+            #{item.chatConversationName},
+            #{item.chatConversationType},
+            #{item.chatConversationActor},
+            #{item.joinTime}
+            )
+        </foreach>
+    </insert>
+
+    <update id="updateChatConversationList">
+        <foreach collection="updateChatConversationList" item="item" index="index" open="" close="" separator=";">
+            update chat_conversation
+            <set>
+                <if test="item.chatConversationNo != null and item.chatConversationNo != ''">
+                    chat_conversation_no = #{item.chatConversationNo},
+                </if>
+                <if test="item.chatConversationName != null and item.chatConversationName != ''">
+                    chat_conversation_name = #{item.chatConversationName},
+                </if>
+                <if test="item.chatConversationType != null and item.chatConversationType != ''">
+                    chat_conversation_type = #{item.chatConversationType},
+                </if>
+                <if test="item.chatConversationActor != null and item.chatConversationActor != ''">
+                    chat_conversation_actor = #{item.chatConversationActor},
+                </if>
+                <if test="item.joinTime != null and item.joinTime != ''">
+                    join_time = #{item.joinTime},
+                </if>
+                chat_conversation_id = #{item.chatConversationID}
+            </set>
+            <where>
+                chat_conversation_id = #{item.chatConversationID}
+            </where>
+        </foreach>
+    </update>
+
+    <delete id="deleteChatConversationList">
+        delete from chat_conversation where chat_conversation_id in (
+        <foreach collection="deleteChatConversationList" item="item" index="index" open="" close="" separator=",">
+            #{item.chatConversationID}
+        </foreach>
+        )
+    </delete>
+
+</mapper>
