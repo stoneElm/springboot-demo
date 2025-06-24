@@ -243,7 +243,7 @@ public class CodeSupportServiceImpl implements ICodeSupportService {
             resultSB.append(LINE);
         } else {
             resultSB.append(TAB + TAB + "List<" + var1 + "VO> resultData = " + var2 + "Mapper." + type + var1 + "List(" + var2+ "AO);" + LINE);
-            resultSB.append(TAB + TAB + "LOGGER.info(" + QUOTE + "根据条件查询" + tableQueryVO.getTableComment() + "信息列表出差:{}" + QUOTE + ", JsonUtil.convertObjectToJson(resultData));" + LINE);
+            resultSB.append(TAB + TAB + "LOGGER.info(" + QUOTE + "根据条件查询" + tableQueryVO.getTableComment() + "信息列表出参:{}" + QUOTE + ", JsonUtil.convertObjectToJson(resultData));" + LINE);
             resultSB.append(LINE);
 
             resultSB.append(TAB + TAB + "Integer count" + var1 + "All = " + var2 + "Mapper.count" + var1 + "All(" + var2 + "AO);" + LINE);

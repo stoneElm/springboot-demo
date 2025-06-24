@@ -52,7 +52,7 @@ public class PersonalDocServiceImpl implements IPersonalDocService {
         personalDocAO.setCreateStf(AuthenticationUtil.getUserAndRoleInfo().getUserName());
 
         List<PersonalDocVO> resultData = personalDocMapper.selectPersonalDocList(personalDocAO);
-        LOGGER.info("根据条件查询个人文档表信息列表出差:{}", JsonUtil.convertObjectToJson(resultData));
+        LOGGER.info("根据条件查询个人文档表信息列表出参:{}", JsonUtil.convertObjectToJson(resultData));
 
         Integer countPersonalDocAll = personalDocMapper.countPersonalDocAll(personalDocAO);
         LOGGER.info("根据条件统计结果:{}", countPersonalDocAll);
