@@ -7,7 +7,7 @@
         chat_conversation_no,
         chat_conversation_name,
         chat_conversation_type,
-        chat_conversation_actor,
+        chat_conversation_actor_id,
         join_time
     </sql>
 
@@ -16,7 +16,7 @@
         t.chat_conversation_no as "chatConversationNo",
         t.chat_conversation_name as "chatConversationName",
         t.chat_conversation_type as "chatConversationType",
-        t.chat_conversation_actor as "chatConversationActor",
+        t.chat_conversation_actor_id as "chatConversationActorID",
         t.join_time as "joinTime"
     </sql>
 
@@ -34,8 +34,8 @@
             <if test="chatConversationType != null and chatConversationType != ''">
                 and t.chat_conversation_type = #{chatConversationType}
             </if>
-            <if test="chatConversationActor != null and chatConversationActor != ''">
-                and t.chat_conversation_actor = #{chatConversationActor}
+            <if test="chatConversationActorID != null and chatConversationActorID != ''">
+                and t.chat_conversation_actor_id = #{chatConversationActorID}
             </if>
             <if test="joinTime != null and joinTime != ''">
                 and t.join_time = #{joinTime}
@@ -57,6 +57,15 @@
         <include refid="pageParam"/>
     </select>
 
+    <select id="selectChatConversationListByUserOneAndUserTwo" resultType="com.stone.elm.springboot.demo.business.chat.model.vo.ChatConversationVO">
+        select
+        <include refid="chatConversationQueryFields"/>
+        from chat_conversation t
+        where t.chat_conversation_actor_id in (#{userOneID},  #{userTwoID})
+        group by t.chat_conversation_no
+        HAVING COUNT(DISTINCT t.chat_conversation_actor_id) > 1;
+    </select>
+
     <select id="countChatConversationAll" resultType="java.lang.Integer">
         select count(1)
         from chat_conversation t
@@ -71,7 +80,7 @@
             #{item.chatConversationNo},
             #{item.chatConversationName},
             #{item.chatConversationType},
-            #{item.chatConversationActor},
+            #{item.chatConversationActorID},
             #{item.joinTime}
             )
         </foreach>
@@ -90,8 +99,8 @@
                 <if test="item.chatConversationType != null and item.chatConversationType != ''">
                     chat_conversation_type = #{item.chatConversationType},
                 </if>
-                <if test="item.chatConversationActor != null and item.chatConversationActor != ''">
-                    chat_conversation_actor = #{item.chatConversationActor},
+                <if test="item.chatConversationActorID != null and item.chatConversationActorID != ''">
+                    chat_conversation_actor_id = #{item.chatConversationActorID},
                 </if>
                 <if test="item.joinTime != null and item.joinTime != ''">
                     join_time = #{item.joinTime},

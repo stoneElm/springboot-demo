@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Api(tags = "_____/聊天会话表维护")
+@Api(tags = "聊天会话/聊天会话表维护")
 @RestController("ChatConversationController")
-@RequestMapping("/char/chatConversation")
+@RequestMapping("/chat/chatConversation")
 public class ChatConversationController {
     @Autowired
     private IChatConversationService iChatConversationService;
@@ -34,8 +34,8 @@ public class ChatConversationController {
     @PostMapping("/createChatConversationList")
     @ApiOperation(value = "新增聊天会话表列表 维护人:Lan StoneElm")
     public ResponseResult<List<ChatConversationVO>> createChatConversationList (
-            @ApiParam(name = "ChatConversationAO", value = "聊天会话表实体AO") @RequestBody @Validated(ChatConversationAO.createGroup.class) ChatConversationAO chatConversationAO) {
-        return iChatConversationService.createChatConversationList(chatConversationAO);
+            @ApiParam(name = "ChatConversationAO", value = "聊天会话表实体AO") @RequestBody @Validated(ChatConversationAO.createGroup.class) ValidList<ChatConversationAO> chatConversationList) {
+        return iChatConversationService.createChatConversationList(chatConversationList);
     }
 
     @PostMapping("/updateChatConversationList")

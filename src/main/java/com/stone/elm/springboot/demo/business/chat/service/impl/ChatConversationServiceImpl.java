@@ -1,22 +1,20 @@
 package com.stone.elm.springboot.demo.business.chat.service.impl;
 
-import com.stone.elm.springboot.demo.basictech.common.constant.NumberConstant;
-import com.stone.elm.springboot.demo.basictech.common.exception.BusinessException;
-import com.stone.elm.springboot.demo.basictech.common.response.ResponseConstant;
 import com.stone.elm.springboot.demo.basictech.common.response.ResponseResult;
 import com.stone.elm.springboot.demo.basictech.common.response.ResultUtils;
 import com.stone.elm.springboot.demo.basictech.common.service.IPrimaryKeyService;
 import com.stone.elm.springboot.demo.basictech.common.utils.BeanCopyUtil;
+import com.stone.elm.springboot.demo.basictech.common.utils.DateUtils;
 import com.stone.elm.springboot.demo.basictech.common.utils.JsonUtil;
+import com.stone.elm.springboot.demo.business.chat.mapper.ChatConversationAppMapper;
 import com.stone.elm.springboot.demo.business.chat.mapper.ChatConversationMapper;
 import com.stone.elm.springboot.demo.business.chat.model.ao.ChatConversationAO;
+import com.stone.elm.springboot.demo.business.chat.model.ao.ChatConversationAppAO;
+import com.stone.elm.springboot.demo.business.chat.model.enums.ChatInvitationEnum;
+import com.stone.elm.springboot.demo.business.chat.model.enums.ConversationTypeEnum;
 import com.stone.elm.springboot.demo.business.chat.model.vo.ChatConversationVO;
 import com.stone.elm.springboot.demo.business.chat.service.IChatConversationService;
-import com.stone.elm.springboot.demo.business.user.mapper.UserInfoMapper;
-import com.stone.elm.springboot.demo.business.user.model.ao.UserInfoAO;
-import com.stone.elm.springboot.demo.business.user.model.vo.UserInfoVO;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +34,7 @@ public class ChatConversationServiceImpl implements IChatConversationService {
     private ChatConversationMapper chatConversationMapper;
 
     @Autowired
-    private UserInfoMapper userInfoMapper;
+    private ChatConversationAppMapper chatConversationAppMapper;
 
     /**
      * 查询聊天会话表列表ServiceImpl
@@ -62,39 +60,19 @@ public class ChatConversationServiceImpl implements IChatConversationService {
 
     /**
      * 创建聊天会话表列表ServiceImpl
-     * @param chatConversationAO
+     * @param createChatConversationList
      * @return
      */
     @Override
-    public ResponseResult<List<ChatConversationVO>> createChatConversationList(ChatConversationAO chatConversationAO) {
-        LOGGER.info("创建聊天会话表入参:{}", JsonUtil.convertObjectToJson(chatConversationAO));
-
-        if (StringUtils.isBlank(chatConversationAO.getAddedUserName())) {
-            throw new BusinessException("添加对象名称不能为空!", ResponseConstant.FAIL);
-        }
-
-        // 查询对象信息
-        UserInfoAO userInfoAO = new UserInfoAO();
-        userInfoAO.setUserName(chatConversationAO.getAddedUserName());
-        List<UserInfoVO> userInfoList = userInfoMapper.selectUserInfoList(userInfoAO);
-
-        if (CollectionUtils.isEmpty(userInfoList) || userInfoList.size() != NumberConstant.ONE) {
-            throw new BusinessException("当前用户不存在或者不唯一!", ResponseConstant.FAIL);
-        }
-
-        // 查询当前登录人和会话对象的会话是否为同一会话编码，且不能为群组
-
-        ChatConversationAO queryParam = new ChatConversationAO();
-
-
-        ArrayList<ChatConversationAO> createChatConversationList = new ArrayList<>();
+    public ResponseResult<List<ChatConversationVO>> createChatConversationList(List<ChatConversationAO> createChatConversationList) {
+        LOGGER.info("创建聊天会话表入参:{}", JsonUtil.convertObjectToJson(createChatConversationList));
 
         if (CollectionUtils.isEmpty(createChatConversationList)) {
             return ResultUtils.wrapResult();
         }
 
-        for (ChatConversationAO conversationAO : createChatConversationList) {
-            conversationAO.setChatConversationID(iPrimaryKeyService.getPrimaryKey());
+        for (ChatConversationAO chatConversationAO : createChatConversationList) {
+            chatConversationAO.setChatConversationID(iPrimaryKeyService.getPrimaryKey());
         }
 
         Integer row = chatConversationMapper.createChatConversationList(createChatConversationList);
@@ -156,6 +134,49 @@ public class ChatConversationServiceImpl implements IChatConversationService {
         ResponseResult<List<ChatConversationVO>> result = ResultUtils.wrapResult(resultData);
 
         LOGGER.info("删除聊天会话表出参:{}", JsonUtil.convertObjectToJson(result));
+        return result;
+    }
+
+    @Override
+    public ResponseResult<List<ChatConversationVO>> createChatConversationListByAppList(List<ChatConversationAppAO> chatConversationAppList) {
+        LOGGER.info("通过申请信息生成聊天会话信息入参:{}", JsonUtil.convertObjectToJson(chatConversationAppList));
+
+        List<ChatConversationAO> createConversationList = new ArrayList<>();
+
+        String currentFormat = DateUtils.getCurrentFormat();
+
+        for (ChatConversationAppAO chatConversationAppAO : chatConversationAppList) {
+            // 生成用用户会话信息
+            ChatConversationAO conversationOneAO = new ChatConversationAO();
+            ChatConversationAO conversationTwoAO = new ChatConversationAO();
+            Long primaryKey = iPrimaryKeyService.getPrimaryKey();
+            conversationOneAO.setChatConversationNo(primaryKey);
+            conversationTwoAO.setChatConversationNo(primaryKey);
+            conversationOneAO.setChatConversationType(ConversationTypeEnum.FRIEND.getCode());
+            conversationTwoAO.setChatConversationType(ConversationTypeEnum.FRIEND.getCode());
+            conversationOneAO.setJoinTime(currentFormat);
+            conversationTwoAO.setJoinTime(currentFormat);
+            conversationOneAO.setChatConversationActorID(chatConversationAppAO.getInvitedObjectID());
+            conversationTwoAO.setChatConversationActorID(chatConversationAppAO.getBeInvitedObjectID());
+            createConversationList.add(conversationOneAO);
+            createConversationList.add(conversationTwoAO);
+
+            chatConversationAppAO.setInvitationStatus(ChatInvitationEnum.AGREED.getCode());
+        }
+
+        this.createChatConversationList(createConversationList);
+
+        LOGGER.info("生成聊天会话信息持久化数据：{}", JsonUtil.convertObjectToJson(chatConversationAppList));
+        Integer row = chatConversationAppMapper.updateChatConversationAppList(chatConversationAppList);
+        LOGGER.info("成功执行{}条数据", row);
+
+
+        List<ChatConversationVO> resultData = new ArrayList<>();
+        BeanCopyUtil.copyList(chatConversationAppList, resultData, ChatConversationVO.class);
+
+        ResponseResult<List<ChatConversationVO>> result = ResultUtils.wrapResult(resultData);
+
+        LOGGER.info("通过申请信息生成聊天会话信息出参:{}", JsonUtil.convertObjectToJson(result));
         return result;
     }
 

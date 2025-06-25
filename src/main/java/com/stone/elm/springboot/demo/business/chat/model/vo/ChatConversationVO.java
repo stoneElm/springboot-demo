@@ -10,7 +10,7 @@ public class ChatConversationVO {
     private Long chatConversationID;
 
     @ApiModelProperty(value = "聊天会话（房间号）编码")
-    private String chatConversationNo;
+    private Long chatConversationNo;
 
     @ApiModelProperty(value = "聊天会话名称")
     private String chatConversationName;
@@ -19,7 +19,7 @@ public class ChatConversationVO {
     private String chatConversationType;
 
     @ApiModelProperty(value = "会话参与者")
-    private String chatConversationActor;
+    private Long chatConversationActorID;
 
     @ApiModelProperty(value = "加入时间")
     private String joinTime;
@@ -32,11 +32,11 @@ public class ChatConversationVO {
         this.chatConversationID = chatConversationID;
     }
 
-    public String getChatConversationNo() {
+    public Long getChatConversationNo() {
         return chatConversationNo;
     }
 
-    public void setChatConversationNo(String chatConversationNo) {
+    public void setChatConversationNo(Long chatConversationNo) {
         this.chatConversationNo = chatConversationNo;
     }
 
@@ -56,12 +56,12 @@ public class ChatConversationVO {
         this.chatConversationType = chatConversationType;
     }
 
-    public String getChatConversationActor() {
-        return chatConversationActor;
+    public Long getChatConversationActorID() {
+        return chatConversationActorID;
     }
 
-    public void setChatConversationActor(String chatConversationActor) {
-        this.chatConversationActor = chatConversationActor;
+    public void setChatConversationActorID(Long chatConversationActorID) {
+        this.chatConversationActorID = chatConversationActorID;
     }
 
     public String getJoinTime() {

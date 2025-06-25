@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.stone.elm.springboot.demo.business.chat.mapper.ChatConversationAppMapper" >
+
+    <sql id="chatConversationAppInsertFields">
+        chat_conversation_app_id,
+        invited_object_id,
+        be_invited_object_id,
+        Invitation_time,
+        Invitation_status,
+        verification_message
+    </sql>
+
+    <sql id="chatConversationAppQueryFields">
+        t.chat_conversation_app_id as "chatConversationAppID",
+        t.invited_object_id as "invitedObjectID",
+        t.be_invited_object_id as "beInvitedObjectID",
+        t.Invitation_time as "invitationTime",
+        t.Invitation_status as "invitationStatus",
+        t.verification_message as "verificationMessage"
+    </sql>
+
+    <sql id="chatConversationAppQueryParam">
+        <where>
+            <if test="chatConversationAppID != null and chatConversationAppID != ''">
+                and t.chat_conversation_app_id = #{chatConversationAppID}
+            </if>
+            <if test="invitedObjectID != null and invitedObjectID != ''">
+                and t.invited_object_id = #{invitedObjectID}
+            </if>
+            <if test="beInvitedObjectID != null and beInvitedObjectID != ''">
+                and t.be_invited_object_id = #{beInvitedObjectID}
+            </if>
+            <if test="invitationTime != null and invitationTime != ''">
+                and t.Invitation_time = #{invitationTime}
+            </if>
+            <if test="invitationStatus != null and invitationStatus != ''">
+                and t.Invitation_status = #{invitationStatus}
+            </if>
+            <if test="verificationMessage != null and verificationMessage != ''">
+                and t.verification_message = #{verificationMessage}
+            </if>
+        </where>
+    </sql>
+
+    <sql id="pageParam">
+        <if test="pageSize != null and pageSize != '' and pageNo != null and pageNo != ''">
+            limit #{indexStart}, #{pageSize}
+        </if>
+    </sql>
+
+    <select id="selectChatConversationAppList" resultType="com.stone.elm.springboot.demo.business.chat.model.vo.ChatConversationAppVO">
+        select
+        <include refid="chatConversationAppQueryFields"/>
+        from chat_conversation_app t
+        <include refid="chatConversationAppQueryParam"/>
+        <include refid="pageParam"/>
+    </select>
+
+    <select id="countChatConversationAppAll" resultType="java.lang.Integer">
+        select count(1)
+        from chat_conversation_app t
+        <include refid="chatConversationAppQueryParam"/>
+    </select>
+
+    <insert id="createChatConversationAppList">
+        insert into chat_conversation_app(<include refid="chatConversationAppInsertFields"/>) values
+        <foreach collection="createChatConversationAppList" separator="," item="item" index="index">
+            (
+            #{item.chatConversationAppID},
+            #{item.invitedObjectID},
+            #{item.beInvitedObjectID},
+            #{item.invitationTime},
+            #{item.invitationStatus},
+            #{item.verificationMessage}
+            )
+        </foreach>
+    </insert>
+
+    <update id="updateChatConversationAppList">
+        <foreach collection="updateChatConversationAppList" item="item" index="index" open="" close="" separator=";">
+            update chat_conversation_app
+            <set>
+                <if test="item.invitedObjectID != null and item.invitedObjectID != ''">
+                    invited_object_id = #{item.invitedObjectID},
+                </if>
+                <if test="item.beInvitedObjectID != null and item.beInvitedObjectID != ''">
+                    be_invited_object_id = #{item.beInvitedObjectID},
+                </if>
+                <if test="item.invitationTime != null and item.invitationTime != ''">
+                    Invitation_time = #{item.invitationTime},
+                </if>
+                <if test="item.invitationStatus != null and item.invitationStatus != ''">
+                    Invitation_status = #{item.invitationStatus},
+                </if>
+                <if test="item.verificationMessage != null and item.verificationMessage != ''">
+                    verification_message = #{item.verificationMessage},
+                </if>
+                chat_conversation_app_id = #{item.chatConversationAppID}
+            </set>
+            <where>
+                chat_conversation_app_id = #{item.chatConversationAppID}
+            </where>
+        </foreach>
+    </update>
+
+    <delete id="deleteChatConversationAppList">
+        delete from chat_conversation_app where chat_conversation_app_id in (
+        <foreach collection="deleteChatConversationAppList" item="item" index="index" open="" close="" separator=",">
+            #{item.chatConversationAppID}
+        </foreach>
+        )
+    </delete>
+
+</mapper>

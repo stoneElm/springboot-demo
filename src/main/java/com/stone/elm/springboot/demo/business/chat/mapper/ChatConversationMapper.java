@@ -1,6 +1,8 @@
 package com.stone.elm.springboot.demo.business.chat.mapper;
 
 import com.stone.elm.springboot.demo.business.chat.model.ao.ChatConversationAO;
+import com.stone.elm.springboot.demo.business.chat.model.ao.ChatConversationAppAO;
+import com.stone.elm.springboot.demo.business.chat.model.vo.ChatConversationAppVO;
 import com.stone.elm.springboot.demo.business.chat.model.vo.ChatConversationVO;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.apache.ibatis.annotations.Mapper;
@@ -16,6 +18,8 @@ public interface ChatConversationMapper {
      * @return
      */
     List<ChatConversationVO> selectChatConversationList(ChatConversationAO chatConversationAO);
+
+    List<ChatConversationVO> selectChatConversationListByUserOneAndUserTwo(ChatConversationAO chatConversationAppAO);
 
     /**
      * 统计聊天会话表列表Mapper
