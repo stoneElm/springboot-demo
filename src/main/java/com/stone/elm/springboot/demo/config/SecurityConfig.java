@@ -30,7 +30,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("**/webSocket/**"); // 替换为你的WebSocket端点
+        web.ignoring().antMatchers("/webSocket/**"); // 替换为你的WebSocket端点
     }
 
 
