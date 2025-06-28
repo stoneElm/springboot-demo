@@ -24,6 +24,12 @@ public class ChatConversationAppVO {
     @ApiModelProperty(value = "验证消息")
     private String verificationMessage;
 
+    @ApiModelProperty(value = "邀请对象名称")
+    private String invitedObjectName;
+
+    @ApiModelProperty(value = "被邀请对象名称")
+    private String beInvitedObjectName;
+
     public Long getChatConversationAppID() {
         return chatConversationAppID;
     }
@@ -70,5 +76,21 @@ public class ChatConversationAppVO {
 
     public void setVerificationMessage(String verificationMessage) {
         this.verificationMessage = verificationMessage;
+    }
+
+    public String getInvitedObjectName() {
+        return invitedObjectName;
+    }
+
+    public void setInvitedObjectName(String invitedObjectName) {
+        this.invitedObjectName = invitedObjectName;
+    }
+
+    public String getBeInvitedObjectName() {
+        return beInvitedObjectName;
+    }
+
+    public void setBeInvitedObjectName(String beInvitedObjectName) {
+        this.beInvitedObjectName = beInvitedObjectName;
     }
 }

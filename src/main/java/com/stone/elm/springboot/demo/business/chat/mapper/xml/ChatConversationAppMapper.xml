@@ -17,7 +17,8 @@
         t.be_invited_object_id as "beInvitedObjectID",
         t.Invitation_time as "invitationTime",
         t.Invitation_status as "invitationStatus",
-        t.verification_message as "verificationMessage"
+        t.verification_message as "verificationMessage",
+        (select u.user_name as "invitedObjectName" from user_info u where u.user_id = t.invited_object_id) as invitedObjectName
     </sql>
 
     <sql id="chatConversationAppQueryParam">
@@ -54,6 +55,7 @@
         <include refid="chatConversationAppQueryFields"/>
         from chat_conversation_app t
         <include refid="chatConversationAppQueryParam"/>
+        order by t.Invitation_time desc
         <include refid="pageParam"/>
     </select>
 

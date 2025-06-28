@@ -15,6 +15,8 @@ public interface IChatConversationAppService {
      */
     ResponseResult<List<ChatConversationAppVO>> selectChatConversationAppList(ChatConversationAppAO chatConversationAppAO);
 
+    ResponseResult<List<ChatConversationAppVO>> selectLoginUserInvitedInfo(ChatConversationAppAO chatConversationAppAO);
+
     /**
      * 创建聊天会话申请表列表Service
      * @param chatConversationAppList
@@ -35,5 +37,4 @@ public interface IChatConversationAppService {
      * @return
      */
     ResponseResult<List<ChatConversationAppVO>> deleteChatConversationAppList(List<ChatConversationAppAO> chatConversationAppList);
-
 }

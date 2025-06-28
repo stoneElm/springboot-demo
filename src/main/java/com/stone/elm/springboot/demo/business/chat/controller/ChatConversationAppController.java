@@ -32,6 +32,13 @@ public class ChatConversationAppController {
         return iChatConversationAppService.selectChatConversationAppList(chatConversationAppAO);
     }
 
+    @PostMapping("/selectLoginUserInvitedInfo")
+    @ApiOperation(value = "获取当前登陆人聊天会话受邀信息 维护人:Lan StoneElm")
+    public ResponseResult<List<ChatConversationAppVO>> selectLoginUserInvitedInfo (
+            @ApiParam(name = "ChatConversationAppAO", value = "聊天会话申请表实体AO") @RequestBody @Validated(ChatConversationAppAO.selectGroup.class) ChatConversationAppAO chatConversationAppAO) {
+        return iChatConversationAppService.selectLoginUserInvitedInfo(chatConversationAppAO);
+    }
+
     @PostMapping("/createChatConversationAppList")
     @ApiOperation(value = "新增聊天会话申请表列表 维护人:Lan StoneElm")
     public ResponseResult<List<ChatConversationAppVO>> createChatConversationAppList (

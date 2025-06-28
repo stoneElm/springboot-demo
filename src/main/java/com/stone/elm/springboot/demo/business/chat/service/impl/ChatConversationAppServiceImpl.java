@@ -73,6 +73,20 @@ public class ChatConversationAppServiceImpl implements IChatConversationAppServi
         return result;
     }
 
+    @Override
+    public ResponseResult<List<ChatConversationAppVO>> selectLoginUserInvitedInfo(ChatConversationAppAO chatConversationAppAO) {
+        // 获取当前登陆人ID
+        UserInfoVO userInfo = AuthenticationUtil.getUserAndRoleInfo();
+
+        chatConversationAppAO = new ChatConversationAppAO();
+        chatConversationAppAO.setBeInvitedObjectID(userInfo.getUserID());
+        chatConversationAppAO.setInvitationStatus(ChatInvitationEnum.PENDING.getCode());
+
+        ResponseResult<List<ChatConversationAppVO>> responseResult = this.selectChatConversationAppList(chatConversationAppAO);
+
+        return responseResult;
+    }
+
     /**
      * 创建聊天会话申请表列表ServiceImpl
      * @param createChatConversationAppList
