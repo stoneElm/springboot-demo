@@ -7,7 +7,7 @@ import javax.websocket.Session;
 /**
  * 用于存放websocket对象信息
  */
-public class WebSocketConnectObj {
+public class WebSocketConnectModel {
 
     private Long userID;
 

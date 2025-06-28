@@ -8,6 +8,8 @@ public class NumberConstant {
 
     public final static Integer ONE = 1;
 
+    public final static Integer TWO = 2;
+
     public final static Integer THREE = 3;
 
     public final static Integer FOUR = 4;

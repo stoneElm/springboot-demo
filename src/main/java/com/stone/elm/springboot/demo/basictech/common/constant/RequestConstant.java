@@ -7,6 +7,8 @@ public class RequestConstant {
 
     public final static String STONE_FILE_TOKEN = "stoneFileToken";
 
+    public final static String SEC_WEBSOCKET_PROTOCOL =  "Sec-WebSocket-Protocol";
+
     public final static String MEDIA_TYPE_STREAM = "application/octet-stream";
 
 }
