@@ -20,8 +20,11 @@ public class UserInfoVO {
     @ApiModelProperty(value = "用户密码")
     private String password;
 
-    @ApiModelProperty(value = "用户密码")
+    @ApiModelProperty(value = "在线状态")
     private String onlineStat;
+
+    @ApiModelProperty(value = "头像附件唯一标识")
+    private Long avatarAttachDtlID;
 
     public Long getUserID() {
         return userID;
@@ -69,5 +72,13 @@ public class UserInfoVO {
 
     public void setOnlineStat(String onlineStat) {
         this.onlineStat = onlineStat;
+    }
+
+    public Long getAvatarAttachDtlID() {
+        return avatarAttachDtlID;
+    }
+
+    public void setAvatarAttachDtlID(Long avatarAttachDtlID) {
+        this.avatarAttachDtlID = avatarAttachDtlID;
     }
 }

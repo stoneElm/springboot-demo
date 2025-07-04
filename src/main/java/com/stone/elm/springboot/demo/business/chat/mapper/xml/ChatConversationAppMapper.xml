@@ -18,7 +18,8 @@
         t.Invitation_time as "invitationTime",
         t.Invitation_status as "invitationStatus",
         t.verification_message as "verificationMessage",
-        (select u.user_name as "invitedObjectName" from user_info u where u.user_id = t.invited_object_id) as invitedObjectName
+        (select u.user_name from user_info u where u.user_id = t.invited_object_id) as invitedObjectName,
+        (select u.avatar_attach_dtl_id from user_info u where u.user_id = t.invited_object_id) as avatarAttachDtlID
     </sql>
 
     <sql id="chatConversationAppQueryParam">

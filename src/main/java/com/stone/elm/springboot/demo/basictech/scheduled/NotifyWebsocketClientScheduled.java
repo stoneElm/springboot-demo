@@ -26,7 +26,7 @@ public class NotifyWebsocketClientScheduled {
     }
 
     // 每5秒执行一次（心跳检测）
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 20000)
     public void heartbeat() {
         Map<String, WebSocketSession> sessions = webSocketServerHandler.getSessions();
 

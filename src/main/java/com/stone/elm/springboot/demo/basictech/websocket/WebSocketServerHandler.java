@@ -7,14 +7,11 @@ import com.stone.elm.springboot.demo.basictech.common.exception.BusinessExceptio
 import com.stone.elm.springboot.demo.basictech.common.response.ResponseConstant;
 import com.stone.elm.springboot.demo.basictech.common.utils.JwtUtil;
 import com.stone.elm.springboot.demo.basictech.websocket.Utils.WebSocketUtil;
-import com.stone.elm.springboot.demo.basictech.websocket.model.WebSocketMessageModel;
-import com.stone.elm.springboot.demo.basictech.websocket.model.enums.WebSocketMessageTypeEnum;
 import io.jsonwebtoken.Claims;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.CloseStatus;
-import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 

@@ -10,7 +10,7 @@ import java.util.List;
 
 @ApiModel(value = "UserInfoAO", description = "用户信息实体AO")
 public class UserInfoAO extends QueryEntity {
-    public interface registerGroup{};
+    public interface registerGroup{}
 
     public interface selectGroup{}
     public interface createGroup{}
@@ -41,6 +41,9 @@ public class UserInfoAO extends QueryEntity {
     @ApiModelProperty(value = "用户密码")
     @NotBlank(message = "用户密码不能为空", groups = {UserInfoAO.registerGroup.class})
     private String password;
+
+    @ApiModelProperty(value = "头像附件唯一标识")
+    private Long avatarAttachDtlID;
 
     public Long getUserID() {
         return userID;
@@ -96,5 +99,13 @@ public class UserInfoAO extends QueryEntity {
 
     public void setOnlineStat(String onlineStat) {
         this.onlineStat = onlineStat;
+    }
+
+    public Long getAvatarAttachDtlID() {
+        return avatarAttachDtlID;
+    }
+
+    public void setAvatarAttachDtlID(Long avatarAttachDtlID) {
+        this.avatarAttachDtlID = avatarAttachDtlID;
     }
 }

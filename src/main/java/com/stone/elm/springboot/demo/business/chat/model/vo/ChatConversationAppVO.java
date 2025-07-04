@@ -30,6 +30,9 @@ public class ChatConversationAppVO {
     @ApiModelProperty(value = "被邀请对象名称")
     private String beInvitedObjectName;
 
+    @ApiModelProperty(value = "头像附件唯一标识")
+    private Long avatarAttachDtlID;
+
     public Long getChatConversationAppID() {
         return chatConversationAppID;
     }
@@ -92,5 +95,13 @@ public class ChatConversationAppVO {
 
     public void setBeInvitedObjectName(String beInvitedObjectName) {
         this.beInvitedObjectName = beInvitedObjectName;
+    }
+
+    public Long getAvatarAttachDtlID() {
+        return avatarAttachDtlID;
+    }
+
+    public void setAvatarAttachDtlID(Long avatarAttachDtlID) {
+        this.avatarAttachDtlID = avatarAttachDtlID;
     }
 }

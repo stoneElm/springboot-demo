@@ -9,7 +9,8 @@
         nick_name,
         password,
         user_phone,
-        online_stat
+        online_stat,
+        avatar_attach_dtl_id
     </sql>
 
     <!-- 用户信息查询字段SQL片段 -->
@@ -19,7 +20,8 @@
         nick_name as "nickName",
         password as "password",
         user_phone as "userPhone",
-        online_stat as "onlineStat"
+        online_stat as "onlineStat",
+        avatar_attach_dtl_id as "avatarAttachDtlID"
     </sql>
 
     <!-- 查询分页信息SQL片段 -->
@@ -74,7 +76,8 @@
             #{nickName},
             #{password},
             #{userPhone},
-            #{onlineStat}
+            #{onlineStat},
+            #{avatarAttachDtlID}
         )
     </insert>
 
@@ -96,6 +99,9 @@
                 </if>
                 <if test="item.onlineStat != null and item.onlineStat != ''">
                     online_stat = #{item.onlineStat},
+                </if>
+                <if test="item.avatarAttachDtlID != null and item.avatarAttachDtlID != ''">
+                    avatar_attach_dtl_id = #{item.avatarAttachDtlID},
                 </if>
                 user_id = #{item.userID}
             </set>
