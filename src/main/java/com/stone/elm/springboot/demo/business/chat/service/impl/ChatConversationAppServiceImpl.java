@@ -115,7 +115,7 @@ public class ChatConversationAppServiceImpl implements IChatConversationAppServi
             List<UserInfoVO> userInfoList = userInfoMapper.selectUserInfoList(userInfoAO);
 
             if (CollectionUtils.isEmpty(userInfoList) || userInfoList.size() != NumberConstant.ONE) {
-                throw new BusinessException("用户名称：" + userInfoAO.getUserName() + "，不存在或者不唯一!", ResponseConstant.FAIL);
+                throw new BusinessException("用户名称：" + userInfoAO.getUserName() + "，不存在!", ResponseConstant.FAIL);
             }
 
             // 查询是否存在会话

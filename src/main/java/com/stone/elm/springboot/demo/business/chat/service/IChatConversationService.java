@@ -16,9 +16,12 @@ public interface IChatConversationService {
      */
     ResponseResult<List<ChatConversationVO>> selectChatConversationList(ChatConversationAO chatConversationAO);
 
+
+    ResponseResult<List<ChatConversationVO>> selectLoginUserConversationList(ChatConversationAO chatConversationAO);
+
     /**
      * 创建聊天会话表列表Service
-     * @param chatConversationAO
+     * @param createChatConversationList
      * @return
      */
     ResponseResult<List<ChatConversationVO>> createChatConversationList(List<ChatConversationAO> createChatConversationList);

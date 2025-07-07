@@ -24,6 +24,30 @@ public class ChatConversationVO {
     @ApiModelProperty(value = "加入时间")
     private String joinTime;
 
+    @ApiModelProperty(value = "会话对象唯一标识")
+    private Long conversationObjectID;
+
+    @ApiModelProperty(value = "会话对象名称")
+    private String conversationUserName;
+
+    @ApiModelProperty(value = "会话对象昵称")
+    private String conversationNickName;
+
+    @ApiModelProperty(value = "会话对象昵称")
+    private String conversationOnLineStat;
+
+    @ApiModelProperty(value = "会话对象昵称")
+    private Integer unreadMessagesNumber;
+
+    @ApiModelProperty(value = "会话最后消息")
+    private String conversationLastMessage;
+
+    @ApiModelProperty(value = "头像附件唯一标识")
+    private Long avatarAttachDtlID;
+
+    @ApiModelProperty(value = "会话最后消息时间")
+    private String conversationLastMessageDate;
+
     public Long getChatConversationID() {
         return chatConversationID;
     }
@@ -70,5 +94,69 @@ public class ChatConversationVO {
 
     public void setJoinTime(String joinTime) {
         this.joinTime = joinTime;
+    }
+
+    public Long getConversationObjectID() {
+        return conversationObjectID;
+    }
+
+    public void setConversationObjectID(Long conversationObjectID) {
+        this.conversationObjectID = conversationObjectID;
+    }
+
+    public String getConversationUserName() {
+        return conversationUserName;
+    }
+
+    public void setConversationUserName(String conversationUserName) {
+        this.conversationUserName = conversationUserName;
+    }
+
+    public String getConversationNickName() {
+        return conversationNickName;
+    }
+
+    public void setConversationNickName(String conversationNickName) {
+        this.conversationNickName = conversationNickName;
+    }
+
+    public String getConversationOnLineStat() {
+        return conversationOnLineStat;
+    }
+
+    public void setConversationOnLineStat(String conversationOnLineStat) {
+        this.conversationOnLineStat = conversationOnLineStat;
+    }
+
+    public Integer getUnreadMessagesNumber() {
+        return unreadMessagesNumber;
+    }
+
+    public void setUnreadMessagesNumber(Integer unreadMessagesNumber) {
+        this.unreadMessagesNumber = unreadMessagesNumber;
+    }
+
+    public String getConversationLastMessage() {
+        return conversationLastMessage;
+    }
+
+    public void setConversationLastMessage(String conversationLastMessage) {
+        this.conversationLastMessage = conversationLastMessage;
+    }
+
+    public Long getAvatarAttachDtlID() {
+        return avatarAttachDtlID;
+    }
+
+    public void setAvatarAttachDtlID(Long avatarAttachDtlID) {
+        this.avatarAttachDtlID = avatarAttachDtlID;
+    }
+
+    public String getConversationLastMessageDate() {
+        return conversationLastMessageDate;
+    }
+
+    public void setConversationLastMessageDate(String conversationLastMessageDate) {
+        this.conversationLastMessageDate = conversationLastMessageDate;
     }
 }

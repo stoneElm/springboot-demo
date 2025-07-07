@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.stone.elm.springboot.demo.business.chat.mapper.ChatConversationMessageRelatedMapper" >
+
+    <sql id="chatConversationMessageRelatedInsertFields">
+        chat_conversation_message_related_id,
+        chat_conversation_id,
+        chat_message_id,
+        is_read,
+        read_date
+    </sql>
+
+    <sql id="chatConversationMessageRelatedQueryFields">
+        t.chat_conversation_message_related_id as "chatConversationMessageRelatedID",
+        t.chat_conversation_id as "chatConversationID",
+        t.chat_message_id as "chatMessageID",
+        t.is_read as "isRead",
+        t.read_date as "readDate"
+    </sql>
+
+    <sql id="chatConversationMessageRelatedQueryParam">
+        <where>
+            <if test="chatConversationMessageRelatedID != null and chatConversationMessageRelatedID != ''">
+                and t.chat_conversation_message_related_id = #{chatConversationMessageRelatedID}
+            </if>
+            <if test="chatConversationID != null and chatConversationID != ''">
+                and t.chat_conversation_id = #{chatConversationID}
+            </if>
+            <if test="chatMessageID != null and chatMessageID != ''">
+                and t.chat_message_id = #{chatMessageID}
+            </if>
+            <if test="isRead != null and isRead != ''">
+                and t.is_read = #{isRead}
+            </if>
+            <if test="readDate != null and readDate != ''">
+                and t.read_date = #{readDate}
+            </if>
+        </where>
+    </sql>
+
+    <sql id="pageParam">
+        <if test="pageSize != null and pageSize != '' and pageNo != null and pageNo != ''">
+            limit #{indexStart}, #{pageSize}
+        </if>
+    </sql>
+
+    <select id="selectChatConversationMessageRelatedList" resultType="com.stone.elm.springboot.demo.business.chat.model.vo.ChatConversationMessageRelatedVO">
+        select
+        <include refid="chatConversationMessageRelatedQueryFields"/>
+        from chat_conversation_message_related t
+        <include refid="chatConversationMessageRelatedQueryParam"/>
+        <include refid="pageParam"/>
+    </select>
+
+    <select id="countChatConversationMessageRelatedAll" resultType="java.lang.Integer">
+        select count(1)
+        from chat_conversation_message_related t
+        <include refid="chatConversationMessageRelatedQueryParam"/>
+    </select>
+
+    <insert id="createChatConversationMessageRelatedList">
+        insert into chat_conversation_message_related(<include refid="chatConversationMessageRelatedInsertFields"/>) values
+        <foreach collection="createChatConversationMessageRelatedList" separator="," item="item" index="index">
+            (
+            #{item.chatConversationMessageRelatedID},
+            #{item.chatConversationID},
+            #{item.chatMessageID},
+            #{item.isRead},
+            #{item.readDate}
+            )
+        </foreach>
+    </insert>
+
+    <update id="updateChatConversationMessageRelatedList">
+        <foreach collection="updateChatConversationMessageRelatedList" item="item" index="index" open="" close="" separator=";">
+            update chat_conversation_message_related
+            <set>
+                <if test="item.chatConversationID != null and item.chatConversationID != ''">
+                    chat_conversation_id = #{item.chatConversationID},
+                </if>
+                <if test="item.chatMessageID != null and item.chatMessageID != ''">
+                    chat_message_id = #{item.chatMessageID},
+                </if>
+                <if test="item.isRead != null and item.isRead != ''">
+                    is_read = #{item.isRead},
+                </if>
+                <if test="item.readDate != null and item.readDate != ''">
+                    read_date = #{item.readDate},
+                </if>
+                chat_conversation_message_related_id = #{item.chatConversationMessageRelatedID}
+            </set>
+            <where>
+                chat_conversation_message_related_id = #{item.chatConversationMessageRelatedID}
+            </where>
+        </foreach>
+    </update>
+
+    <delete id="deleteChatConversationMessageRelatedList">
+        delete from chat_conversation_message_related where chat_conversation_message_related_id in (
+        <foreach collection="deleteChatConversationMessageRelatedList" item="item" index="index" open="" close="" separator=",">
+            #{item.chatConversationMessageRelatedID}
+        </foreach>
+        )
+    </delete>
+
+</mapper>

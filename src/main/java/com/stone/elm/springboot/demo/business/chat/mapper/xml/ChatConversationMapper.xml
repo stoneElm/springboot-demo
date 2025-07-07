@@ -17,7 +17,15 @@
         t.chat_conversation_name as "chatConversationName",
         t.chat_conversation_type as "chatConversationType",
         t.chat_conversation_actor_id as "chatConversationActorID",
-        t.join_time as "joinTime"
+        t.join_time as "joinTime",
+        (select cc.chat_conversation_actor_id from chat_conversation cc where cc.chat_conversation_no = t.chat_conversation_no and cc.chat_conversation_id &lt;&gt; t.chat_conversation_id limit 1 ) as "conversationObjectID",
+        (select u.user_name from user_info u where u.user_id = (select cc.chat_conversation_actor_id from chat_conversation cc where cc.chat_conversation_no = t.chat_conversation_no and cc.chat_conversation_id &lt;&gt; t.chat_conversation_id limit 1 )) as "conversationUserName",
+        (select u.nick_name from user_info u where u.user_id = (select cc.chat_conversation_actor_id from chat_conversation cc where cc.chat_conversation_no = t.chat_conversation_no and cc.chat_conversation_id &lt;&gt; t.chat_conversation_id limit 1 )) as "conversationNickName",
+        (select u.avatar_attach_dtl_id from user_info u where u.user_id = (select cc.chat_conversation_actor_id from chat_conversation cc where cc.chat_conversation_no = t.chat_conversation_no and cc.chat_conversation_id &lt;&gt; t.chat_conversation_id limit 1 )) as "avatarAttachDtlID",
+        (select u.online_stat from user_info u where u.user_id = (select cc.chat_conversation_actor_id from chat_conversation cc where cc.chat_conversation_no = t.chat_conversation_no and cc.chat_conversation_id &lt;&gt; t.chat_conversation_id limit 1 )) as "conversationOnLineStat",
+        (select count(1) from chat_conversation_message_related ccmr where ccmr.chat_conversation_id = t.chat_conversation_id and ccmr.is_read = '01') "unreadMessagesNumber",
+        (select cm.content from chat_conversation_message_related ccmr left join chat_message cm on ccmr.chat_message_id = cm.chat_message_id where ccmr.chat_conversation_id = t.chat_conversation_id order by cm.message_send_date desc limit 1) as "conversationLastMessage",
+        (select cm.message_send_date from chat_conversation_message_related ccmr left join chat_message cm on ccmr.chat_message_id = cm.chat_message_id where ccmr.chat_conversation_id = t.chat_conversation_id order by cm.message_send_date desc limit 1) as "conversationLastMessageDate"
     </sql>
 
     <sql id="chatConversationQueryParam">

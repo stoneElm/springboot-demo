@@ -1,12 +1,20 @@
 package com.stone.elm.springboot.demo.basictech.common.utils;
 
+import com.stone.elm.springboot.demo.basictech.common.constant.NumberConstant;
+import com.stone.elm.springboot.demo.basictech.common.constant.SymbolConstant;
+import org.apache.commons.lang3.StringUtils;
+
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class DateUtils {
     private static final ThreadLocal<SimpleDateFormat> STAND_FORMAT_LOCAL = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
     private static final ThreadLocal<SimpleDateFormat> FORMAT_EIGHT_DAY = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyyMMdd"));
     private static final ThreadLocal<SimpleDateFormat> FORMAT_SIX_DAY = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyMMdd"));
+    private static final ThreadLocal<SimpleDateFormat> FORMAT_DAY_MINUTE = ThreadLocal.withInitial(() -> new SimpleDateFormat("M月d日 HH:mm"));
+    private static final ThreadLocal<SimpleDateFormat> FORMAT_HOUR_MINUTE = ThreadLocal.withInitial(() -> new SimpleDateFormat("HH:mm"));
 
     private static final int NUM_ZERO = 0;
     private static final int NUM_ONE = 1;
@@ -164,6 +172,7 @@ public class DateUtils {
         calendar.set(Calendar.HOUR_OF_DAY, NUM_ZERO);
         calendar.set(Calendar.MINUTE, NUM_ZERO);
         calendar.set(Calendar.SECOND, NUM_ZERO);
+        calendar.set(Calendar.MILLISECOND, NUM_ZERO);
     }
 
 
@@ -184,5 +193,67 @@ public class DateUtils {
     public static String getCurrentFormat() {
         SimpleDateFormat simpleDateFormat = STAND_FORMAT_LOCAL.get();
         return simpleDateFormat.format(Calendar.getInstance().getTime());
+    }
+
+    public static String getReadTimeFormat(String simpleDateStr) {
+        if (StringUtils.isBlank(simpleDateStr)) {
+            return SymbolConstant.STRING_BLANK;
+        }
+
+        SimpleDateFormat simpleDateFormat = STAND_FORMAT_LOCAL.get();
+
+        Date date;
+        try {
+            date = simpleDateFormat.parse(simpleDateStr);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return SymbolConstant.STRING_BLANK;
+        }
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        // 获取当前日历实例
+        Calendar nowCalendar = Calendar.getInstance();
+
+        // 1. 检查是否在三分钟内（180秒内）
+        long timeDiffInMillis = calendar.getTimeInMillis() - nowCalendar.getTimeInMillis();
+        long timeDiffInSeconds = timeDiffInMillis / NumberConstant.LONG_ONE_THOUSAND;
+
+        if (Math.abs(timeDiffInSeconds) <= NumberConstant.NINETY) {
+            return "刚刚";
+        }
+
+        // 2. 检查日期（今天、昨天、前天）
+        // 重置时间部分，只比较日期
+        Calendar targetDate = (Calendar) calendar.clone();
+        Calendar today = (Calendar) nowCalendar.clone();
+        Calendar yesterday = (Calendar) nowCalendar.clone();
+        Calendar dayBeforeYesterday = (Calendar) nowCalendar.clone();
+
+        // 清除时间部分（时、分、秒、毫秒）
+        setStartCalendar(targetDate);
+        setStartCalendar(today);
+        yesterday.add(Calendar.DATE, NumberConstant.NEGATIVE_ONE);
+        setStartCalendar(yesterday);
+        dayBeforeYesterday.add(Calendar.DATE, NumberConstant.NEGATIVE_TWO);
+        setStartCalendar(dayBeforeYesterday);
+
+        SimpleDateFormat formatDayMinute = FORMAT_DAY_MINUTE.get();
+        SimpleDateFormat formatHourMinute = FORMAT_HOUR_MINUTE.get();
+
+        String dayMinute = formatDayMinute.format(calendar.getTime());
+        String hourMinute = formatHourMinute.format(calendar.getTime());
+
+        // 比较日期
+        if (targetDate.equals(today)) {
+            return hourMinute;
+        } else if (targetDate.equals(yesterday)) {
+            return "昨天 " + hourMinute;
+        } else if (targetDate.equals(dayBeforeYesterday)) {
+            return "前天 " + hourMinute;
+        } else {
+            return dayMinute;
+        }
     }
 }

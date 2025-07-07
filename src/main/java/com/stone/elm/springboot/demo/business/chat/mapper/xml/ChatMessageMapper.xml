@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.stone.elm.springboot.demo.business.chat.mapper.ChatMessageMapper" >
+
+    <sql id="chatMessageInsertFields">
+        chat_message_id,
+        sender_id,
+        receiver_id,
+        content,
+        message_type,
+        message_send_date
+    </sql>
+
+    <sql id="chatMessageQueryFields">
+        t.chat_message_id as "chatMessageID",
+        t.sender_id as "senderID",
+        t.receiver_id as "receiverID",
+        t.content as "content",
+        t.message_type as "messageType",
+        t.message_send_date as "messageSendDate"
+    </sql>
+
+    <sql id="chatMessageQueryParam">
+        <where>
+            <if test="chatMessageID != null and chatMessageID != ''">
+                and t.chat_message_id = #{chatMessageID}
+            </if>
+            <if test="senderID != null and senderID != ''">
+                and t.sender_id = #{senderID}
+            </if>
+            <if test="receiverID != null and receiverID != ''">
+                and t.receiver_id = #{receiverID}
+            </if>
+            <if test="content != null and content != ''">
+                and t.content = #{content}
+            </if>
+            <if test="messageType != null and messageType != ''">
+                and t.message_type = #{messageType}
+            </if>
+            <if test="messageSendDate != null and messageSendDate != ''">
+                and t.message_send_date = #{messageSendDate}
+            </if>
+        </where>
+    </sql>
+
+    <sql id="pageParam">
+        <if test="pageSize != null and pageSize != '' and pageNo != null and pageNo != ''">
+            limit #{indexStart}, #{pageSize}
+        </if>
+    </sql>
+
+    <select id="selectChatMessageList" resultType="com.stone.elm.springboot.demo.business.chat.model.vo.ChatMessageVO">
+        select
+        <include refid="chatMessageQueryFields"/>
+        from chat_message t
+        <include refid="chatMessageQueryParam"/>
+        <include refid="pageParam"/>
+    </select>
+
+    <select id="selectChatMessageListByConversationID" resultType="com.stone.elm.springboot.demo.business.chat.model.vo.ChatMessageVO">
+        select
+            cm.chat_message_id as "chatMessageID",
+            cm.sender_id as "senderID",
+            cm.receiver_id as "receiverID",
+            cm.content as "content",
+            cm.message_type as "messageType",
+            cm.message_send_date as "messageSendDate",
+            cmr.is_read as "isRead",
+            cmr.read_date as "readRead",
+        (select u.avatar_attach_dtl_id from user_info u where u.user_id = (select ccc.chat_conversation_actor_id from chat_conversation ccc where ccc.chat_conversation_no = cc.chat_conversation_no and ccc.chat_conversation_id &lt;&gt; cc.chat_conversation_id limit 1 )) as "avatarAttachDtlID"
+        from chat_conversation cc
+                 inner join chat_conversation_message_related cmr on cc.chat_conversation_id = cmr.chat_conversation_id
+                 inner join chat_message cm on cmr.chat_message_id = cm.chat_message_id
+        where cc.chat_conversation_id = #{chatConversationID}
+        order by cm.message_send_date
+    </select>
+
+    <select id="countChatMessageAll" resultType="java.lang.Integer">
+        select count(1)
+        from chat_message t
+        <include refid="chatMessageQueryParam"/>
+    </select>
+
+    <insert id="createChatMessageList">
+        insert into chat_message(<include refid="chatMessageInsertFields"/>) values
+        <foreach collection="createChatMessageList" separator="," item="item" index="index">
+            (
+            #{item.chatMessageID},
+            #{item.senderID},
+            #{item.receiverID},
+            #{item.content},
+            #{item.messageType},
+            #{item.messageSendDate}
+            )
+        </foreach>
+    </insert>
+
+    <update id="updateChatMessageList">
+        <foreach collection="updateChatMessageList" item="item" index="index" open="" close="" separator=";">
+            update chat_message
+            <set>
+                <if test="item.senderID != null and item.senderID != ''">
+                    sender_id = #{item.senderID},
+                </if>
+                <if test="item.receiverID != null and item.receiverID != ''">
+                    receiver_id = #{item.receiverID},
+                </if>
+                <if test="item.content != null and item.content != ''">
+                    content = #{item.content},
+                </if>
+                <if test="item.messageType != null and item.messageType != ''">
+                    message_type = #{item.messageType},
+                </if>
+                <if test="item.messageSendDate != null and item.messageSendDate != ''">
+                    message_send_date = #{item.messageSendDate},
+                </if>
+                chat_message_id = #{item.chatMessageID}
+            </set>
+            <where>
+                chat_message_id = #{item.chatMessageID}
+            </where>
+        </foreach>
+    </update>
+
+    <delete id="deleteChatMessageList">
+        delete from chat_message where chat_message_id in (
+        <foreach collection="deleteChatMessageList" item="item" index="index" open="" close="" separator=",">
+            #{item.chatMessageID}
+        </foreach>
+        )
+    </delete>
+
+</mapper>

@@ -33,6 +33,9 @@ public class ChatConversationAppVO {
     @ApiModelProperty(value = "头像附件唯一标识")
     private Long avatarAttachDtlID;
 
+    @ApiModelProperty(value = "昵称")
+    private String nickName;
+
     public Long getChatConversationAppID() {
         return chatConversationAppID;
     }
@@ -103,5 +106,13 @@ public class ChatConversationAppVO {
 
     public void setAvatarAttachDtlID(Long avatarAttachDtlID) {
         this.avatarAttachDtlID = avatarAttachDtlID;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
     }
 }

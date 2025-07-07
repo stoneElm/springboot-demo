@@ -3,6 +3,7 @@ package com.stone.elm.springboot.demo.business.chat.service.impl;
 import com.stone.elm.springboot.demo.basictech.common.response.ResponseResult;
 import com.stone.elm.springboot.demo.basictech.common.response.ResultUtils;
 import com.stone.elm.springboot.demo.basictech.common.service.IPrimaryKeyService;
+import com.stone.elm.springboot.demo.basictech.common.utils.AuthenticationUtil;
 import com.stone.elm.springboot.demo.basictech.common.utils.BeanCopyUtil;
 import com.stone.elm.springboot.demo.basictech.common.utils.DateUtils;
 import com.stone.elm.springboot.demo.basictech.common.utils.JsonUtil;
@@ -55,6 +56,25 @@ public class ChatConversationServiceImpl implements IChatConversationService {
         result.setTotal(countChatConversationAll);
 
         LOGGER.info("查询聊天会话表出参:{}", JsonUtil.convertObjectToJson(result));
+        return result;
+    }
+
+    @Override
+    public ResponseResult<List<ChatConversationVO>> selectLoginUserConversationList(ChatConversationAO chatConversationAO) {
+        Long loginUserID = AuthenticationUtil.getUserAndRoleInfo().getUserID();
+
+        chatConversationAO = new ChatConversationAO();
+        chatConversationAO.setChatConversationActorID(loginUserID);
+
+        ResponseResult<List<ChatConversationVO>> result = this.selectChatConversationList(chatConversationAO);
+
+        for (ChatConversationVO conversationVO : result.getData()) {
+            conversationVO.setConversationLastMessageDate(DateUtils.getReadTimeFormat(conversationVO.getConversationLastMessageDate()));
+        }
+
+        Long sum = result.getData().stream().mapToLong(ChatConversationVO::getUnreadMessagesNumber).sum();
+        result.setTotal(sum);
+
         return result;
     }
 
