@@ -10,6 +10,9 @@ import com.stone.elm.springboot.demo.basictech.common.utils.AuthenticationUtil;
 import com.stone.elm.springboot.demo.basictech.common.utils.BeanCopyUtil;
 import com.stone.elm.springboot.demo.basictech.common.utils.DateUtils;
 import com.stone.elm.springboot.demo.basictech.common.utils.JsonUtil;
+import com.stone.elm.springboot.demo.basictech.websocket.Utils.WebSocketUtil;
+import com.stone.elm.springboot.demo.basictech.websocket.model.WebSocketMessageModel;
+import com.stone.elm.springboot.demo.basictech.websocket.model.enums.WebSocketMessageTypeEnum;
 import com.stone.elm.springboot.demo.business.chat.mapper.ChatConversationMapper;
 import com.stone.elm.springboot.demo.business.chat.mapper.ChatConversationMessageRelatedMapper;
 import com.stone.elm.springboot.demo.business.chat.mapper.ChatMessageMapper;
@@ -28,7 +31,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ChatMessageServiceImpl implements IChatMessageService {
@@ -114,6 +119,9 @@ public class ChatMessageServiceImpl implements IChatMessageService {
         UserInfoVO userInfo = AuthenticationUtil.getUserAndRoleInfo();
 
         ArrayList<ChatConversationMessageRelatedAO> createRelatedList = new ArrayList<>();
+        ArrayList<Long> refreshMessageList = new ArrayList<>();
+        Map<Long, Long> refreshMessageMap = new HashMap<>();
+
 
         for (ChatMessageAO chatMessageAO : createChatMessageList) {
             chatMessageAO.setChatMessageID(iPrimaryKeyService.getPrimaryKey());
@@ -137,6 +145,8 @@ public class ChatMessageServiceImpl implements IChatMessageService {
                     chatConversationMessageRelatedAO.setReadDate(currentFormat);
                 } else {
                     chatConversationMessageRelatedAO.setIsRead(CodeClsConstant.IS_FLAG_NO);
+                    refreshMessageList.add(chatConversation.getChatConversationActorID());
+                    refreshMessageMap.put(chatConversation.getChatConversationActorID(), chatMessageAO.getChatConversationNo());
                 }
 
                 createRelatedList.add(chatConversationMessageRelatedAO);
@@ -147,7 +157,18 @@ public class ChatMessageServiceImpl implements IChatMessageService {
         LOGGER.info("成功执行{}条数据", row);
 
         Integer insertRelatedRow = chatConversationMessageRelatedMapper.createChatConversationMessageRelatedList(createRelatedList);
-        LOGGER.info("成功执行{}条数据", row);
+        LOGGER.info("成功执行{}条数据", insertRelatedRow);
+
+        WebSocketMessageModel messageModel = new WebSocketMessageModel();
+        messageModel.setMessageType(WebSocketMessageTypeEnum.REFRESH_UNREAD_MESSAGE.getCode());
+
+        // 通知对象刷新会话消息
+        for (Long userID : refreshMessageList) {
+            ChatConversationAO param = new ChatConversationAO();
+            param.setChatConversationNo(refreshMessageMap.get(userID));
+            messageModel.setMessageContent(JsonUtil.convertObjectToJson(param));
+            WebSocketUtil.sendMessageForUserID(userID, messageModel);
+        }
 
         List<ChatMessageVO> resultData = new ArrayList<>();
         BeanCopyUtil.copyList(createChatMessageList, resultData, ChatMessageVO.class);

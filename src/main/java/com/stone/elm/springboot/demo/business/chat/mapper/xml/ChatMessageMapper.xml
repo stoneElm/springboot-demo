@@ -67,7 +67,7 @@
             cm.message_send_date as "messageSendDate",
             cmr.is_read as "isRead",
             cmr.read_date as "readRead",
-        (select u.avatar_attach_dtl_id from user_info u where u.user_id = (select ccc.chat_conversation_actor_id from chat_conversation ccc where ccc.chat_conversation_no = cc.chat_conversation_no and ccc.chat_conversation_id &lt;&gt; cc.chat_conversation_id limit 1 )) as "avatarAttachDtlID"
+            (select u.avatar_attach_dtl_id from user_info u where u.user_id = (select ccc.chat_conversation_actor_id from chat_conversation ccc where ccc.chat_conversation_no = cc.chat_conversation_no and ccc.chat_conversation_id &lt;&gt; cc.chat_conversation_id limit 1 )) as "avatarAttachDtlID"
         from chat_conversation cc
                  inner join chat_conversation_message_related cmr on cc.chat_conversation_id = cmr.chat_conversation_id
                  inner join chat_message cm on cmr.chat_message_id = cm.chat_message_id

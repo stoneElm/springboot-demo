@@ -1,8 +1,10 @@
 package com.stone.elm.springboot.demo.basictech.websocket.model.enums;
 
 public enum WebSocketMessageTypeEnum {
-    HEARTBEAT("heartbeat", "心跳检测"),
-    REFRESH_MESSAGE("Refresh unread", "客户端刷新未读消息");
+    HEARTBEAT("Heartbeat", "心跳检测"),
+    REFRESH_All_MESSAGE("Refresh all message", "客户端刷新会话邀请信息和未读消息信息"),
+    REFRESH_SESSION_INVITATION("Refresh session invitation", "客户端刷新会话邀请信息"),
+    REFRESH_UNREAD_MESSAGE("Refresh unread message", "客户端刷新未读消息");
 
     WebSocketMessageTypeEnum(String code, String value) {
         this.code = code;

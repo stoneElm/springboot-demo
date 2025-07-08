@@ -1,5 +1,7 @@
 package com.stone.elm.springboot.demo.business.chat.service.impl;
 
+import com.stone.elm.springboot.demo.basictech.common.constant.CodeClsConstant;
+import com.stone.elm.springboot.demo.basictech.common.constant.NumberConstant;
 import com.stone.elm.springboot.demo.basictech.common.response.ResponseResult;
 import com.stone.elm.springboot.demo.basictech.common.response.ResultUtils;
 import com.stone.elm.springboot.demo.basictech.common.service.IPrimaryKeyService;
@@ -21,7 +23,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -67,6 +72,27 @@ public class ChatConversationServiceImpl implements IChatConversationService {
         chatConversationAO.setChatConversationActorID(loginUserID);
 
         ResponseResult<List<ChatConversationVO>> result = this.selectChatConversationList(chatConversationAO);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        // 排序
+        result.getData().sort(Comparator
+                // 1. 先按在线状态排序 ('02'在前，'01'在后)
+                .comparing(ChatConversationVO::getConversationOnLineStat, (s1, s2) -> {
+                    if (s1.equals(s2)) return NumberConstant.ZERO;
+                    if (CodeClsConstant.IS_FLAG_YES.equals(s1)) return NumberConstant.NEGATIVE_ONE;  // '02'排前面
+                    return 1;
+                })
+                // 2. 再按最后消息时间降序排序（处理null值）
+                .thenComparing(
+                        Comparator.comparing(
+                                c -> c.getConversationLastMessageDate() != null ?
+                                        LocalDateTime.parse(c.getConversationLastMessageDate(), formatter) :
+                                        LocalDateTime.MIN,  // null值排最后
+                                Comparator.reverseOrder()
+                        )
+                )
+        );
 
         for (ChatConversationVO conversationVO : result.getData()) {
             conversationVO.setConversationLastMessageDate(DateUtils.getReadTimeFormat(conversationVO.getConversationLastMessageDate()));

@@ -11,6 +11,7 @@ public class ChatConversationMessageRelatedAO extends QueryEntity {
     public interface selectGroup{}
     public interface createGroup{}
     public interface updateGroup{}
+    public interface markReadGroup{}
     public interface deleteGroup{}
 
     @NotNull(message = "聊天会话关联消息表唯一标识不能为空", groups = {updateGroup.class, deleteGroup.class})
@@ -18,6 +19,7 @@ public class ChatConversationMessageRelatedAO extends QueryEntity {
     private Long chatConversationMessageRelatedID;
 
     @ApiModelProperty(value = "关联聊天会话唯一标识")
+    @NotNull(message = "关联聊天会话唯一标识不能为空", groups = {markReadGroup.class})
     private Long chatConversationID;
 
     @ApiModelProperty(value = "关联消息唯一标识")

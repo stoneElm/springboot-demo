@@ -33,6 +33,9 @@ public class ChatMessageVO {
     @ApiModelProperty(value = "会话对象头像附件标识")
     private Long avatarAttachDtlID;
 
+    @ApiModelProperty(value = "是否已读标志")
+    private String isRead;
+
     public Long getChatMessageID() {
         return chatMessageID;
     }
@@ -103,5 +106,13 @@ public class ChatMessageVO {
 
     public void setAvatarAttachDtlID(Long avatarAttachDtlID) {
         this.avatarAttachDtlID = avatarAttachDtlID;
+    }
+
+    public String getIsRead() {
+        return isRead;
+    }
+
+    public void setIsRead(String isRead) {
+        this.isRead = isRead;
     }
 }

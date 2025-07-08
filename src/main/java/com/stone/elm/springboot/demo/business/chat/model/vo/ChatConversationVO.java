@@ -4,7 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel(value = "ChatConversationVO", description = "聊天会话表查询VO")
-public class ChatConversationVO {
+public class ChatConversationVO{
 
     @ApiModelProperty(value = "聊天会话唯一标识")
     private Long chatConversationID;
