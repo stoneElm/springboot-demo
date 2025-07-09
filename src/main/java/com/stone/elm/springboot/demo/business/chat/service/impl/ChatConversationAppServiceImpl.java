@@ -10,6 +10,9 @@ import com.stone.elm.springboot.demo.basictech.common.utils.AuthenticationUtil;
 import com.stone.elm.springboot.demo.basictech.common.utils.BeanCopyUtil;
 import com.stone.elm.springboot.demo.basictech.common.utils.DateUtils;
 import com.stone.elm.springboot.demo.basictech.common.utils.JsonUtil;
+import com.stone.elm.springboot.demo.basictech.websocket.model.WebSocketMessageModel;
+import com.stone.elm.springboot.demo.basictech.websocket.model.enums.WebSocketMessageTypeEnum;
+import com.stone.elm.springboot.demo.basictech.websocket.utils.WebSocketUtil;
 import com.stone.elm.springboot.demo.business.chat.mapper.ChatConversationAppMapper;
 import com.stone.elm.springboot.demo.business.chat.mapper.ChatConversationMapper;
 import com.stone.elm.springboot.demo.business.chat.model.ao.ChatConversationAO;
@@ -31,6 +34,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ChatConversationAppServiceImpl implements IChatConversationAppService {
@@ -154,6 +158,16 @@ public class ChatConversationAppServiceImpl implements IChatConversationAppServi
 
         if (CollectionUtils.isNotEmpty(generateSessionList)) {
             iChatConversationService.createChatConversationListByAppList(generateSessionList);
+
+            // 通知用户刷新客户端所有消息
+            List<Long> collect1 = generateSessionList.stream().map(ChatConversationAppAO::getInvitedObjectID).collect(Collectors.toList());
+            collect1.addAll(generateSessionList.stream().map(ChatConversationAppAO::getBeInvitedObjectID).collect(Collectors.toList()));
+            List<Long> list = collect1.stream().distinct().collect(Collectors.toList());
+
+            WebSocketMessageModel messageModel = new WebSocketMessageModel();
+            messageModel.setMessageType(WebSocketMessageTypeEnum.REFRESH_All_MESSAGE.getCode());
+            WebSocketUtil.sendMessageForUserIDList(list, messageModel);
+
             List<ChatConversationAppVO> resultData = new ArrayList<>();
             BeanCopyUtil.copyList(generateSessionList, resultData, ChatConversationAppVO.class);
             return ResultUtils.wrapResult(resultData);
@@ -166,6 +180,13 @@ public class ChatConversationAppServiceImpl implements IChatConversationAppServi
 
         Integer row = chatConversationAppMapper.createChatConversationAppList(createChatConversationAppList);
         LOGGER.info("成功执行{}条数据", row);
+
+        // 通知用户刷新客户端会话受邀请信息
+        List<Long> collect = createChatConversationAppList.stream().map(ChatConversationAppAO::getBeInvitedObjectID).distinct().collect(Collectors.toList());
+        WebSocketMessageModel messageModel = new WebSocketMessageModel();
+        messageModel.setMessageType(WebSocketMessageTypeEnum.REFRESH_SESSION_INVITATION.getCode());
+        WebSocketUtil.sendMessageForUserIDList(collect, messageModel);
+
 
         List<ChatConversationAppVO> resultData = new ArrayList<>();
         BeanCopyUtil.copyList(createChatConversationAppList, resultData, ChatConversationAppVO.class);

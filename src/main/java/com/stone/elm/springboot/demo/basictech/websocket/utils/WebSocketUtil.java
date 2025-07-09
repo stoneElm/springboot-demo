@@ -1,15 +1,17 @@
-package com.stone.elm.springboot.demo.basictech.websocket.Utils;
+package com.stone.elm.springboot.demo.basictech.websocket.utils;
 
 import com.stone.elm.springboot.demo.basictech.common.utils.JsonUtil;
 import com.stone.elm.springboot.demo.basictech.websocket.WebSocketServerHandler;
 import com.stone.elm.springboot.demo.basictech.websocket.model.WebSocketMessageModel;
 import com.stone.elm.springboot.demo.basictech.websocket.model.enums.WebSocketMessageTypeEnum;
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -38,6 +40,16 @@ public class WebSocketUtil {
         } catch (IOException e) {
             LOGGER.info("消息发送失败！");
             e.printStackTrace();
+        }
+    }
+
+    public static void sendMessageForUserIDList(List<Long> userIDList, WebSocketMessageModel messageModel) {
+        if (CollectionUtils.isEmpty(userIDList)) {
+            return;
+        }
+
+        for (Long userID : userIDList) {
+            sendMessageForUserID(userID, messageModel);
         }
     }
 

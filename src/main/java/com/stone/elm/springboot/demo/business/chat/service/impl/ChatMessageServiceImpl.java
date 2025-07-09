@@ -10,7 +10,7 @@ import com.stone.elm.springboot.demo.basictech.common.utils.AuthenticationUtil;
 import com.stone.elm.springboot.demo.basictech.common.utils.BeanCopyUtil;
 import com.stone.elm.springboot.demo.basictech.common.utils.DateUtils;
 import com.stone.elm.springboot.demo.basictech.common.utils.JsonUtil;
-import com.stone.elm.springboot.demo.basictech.websocket.Utils.WebSocketUtil;
+import com.stone.elm.springboot.demo.basictech.websocket.utils.WebSocketUtil;
 import com.stone.elm.springboot.demo.basictech.websocket.model.WebSocketMessageModel;
 import com.stone.elm.springboot.demo.basictech.websocket.model.enums.WebSocketMessageTypeEnum;
 import com.stone.elm.springboot.demo.business.chat.mapper.ChatConversationMapper;
